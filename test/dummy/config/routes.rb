@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   namespace :admin do
     get "stats", to: "stats#index", as: :stats
+    get "legacy", to: "legacy#index", as: :legacy
   end
   namespace :admin do
       resources :companies

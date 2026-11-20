@@ -5,6 +5,7 @@
  *= require administrate_theme_ui/components
  *= require administrate_theme_ui/pagination
  *= require administrate_theme_ui/modal
+ *= require administrate_theme_ui/compat
  *= require_self
  */
 

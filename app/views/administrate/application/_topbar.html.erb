@@ -3,10 +3,17 @@
   <button type="button" class="atu-iconbtn" data-atu-sidebar-toggle aria-label="Toggle navigation" title="Toggle navigation"><%= atu_icon("sidebar", size: 17) %></button>
   <span class="atu-topbar__sep" aria-hidden="true"></span>
   <div class="atu-topbar__slot">
-    <%= content_for?(:atu_breadcrumbs) ? content_for(:atu_breadcrumbs) : content_for(:atu_topbar) %>
+    <% if content_for?(:atu_breadcrumbs) %>
+      <%= content_for(:atu_breadcrumbs) %>
+    <% elsif content_for?(:atu_topbar) %>
+      <%= content_for(:atu_topbar) %>
+    <% elsif content_for?(:title) %>
+      <%= atu_crumbs_nav(AdministrateThemeUi.config.app_name, content_for(:title).to_s.strip) %>
+    <% end %>
   </div>
   <div class="atu-topbar__end">
     <%= content_for(:atu_topbar_end) %>
     <%= render "theme_switcher" %>
+    <%= render "user_menu" %>
   </div>
 </div>

@@ -121,6 +121,7 @@
   document.addEventListener("keydown", function (e) {
     var t = e.target;
     var typing = t.closest && t.closest("input, textarea, select, [contenteditable], trix-editor");
+    if (e.key === "Escape") document.querySelectorAll("details[data-atu-menu][open]").forEach(function (m) { m.open = false; });
     if (e.key === "/" && !typing && !e.metaKey && !e.ctrlKey) {
       var search = document.querySelector("[data-atu-search]");
       if (search) { e.preventDefault(); search.focus(); search.select(); }
@@ -167,6 +168,9 @@
     }
 
     if ((el = t.closest("[data-atu-dismiss]"))) { dismiss(el.closest(".atu-toast, .atu-alert")); return; }
+
+    // Close any open <details data-atu-menu> when clicking elsewhere.
+    document.querySelectorAll("details[data-atu-menu][open]").forEach(function (m) { if (!m.contains(t)) m.open = false; });
 
     visitRow(e);
   });

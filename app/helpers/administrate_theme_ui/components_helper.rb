@@ -185,16 +185,19 @@ module AdministrateThemeUi
       end
     end
 
-    # Breadcrumbs for the topbar: atu_crumbs(["Loans", admin_loans_path], "Loan #12")
+    # Breadcrumbs for the topbar: atu_crumbs(["Loans", admin_loans_path], "Loan #12").
+    # Pages that set none get "<app name> / <page title>" automatically.
     def atu_crumbs(*items)
-      content_for(:atu_breadcrumbs) do
-        tag.nav(class: "atu-crumbs", "aria-label": "Breadcrumb") do
-          tag.ol do
-            safe_join(items.each_with_index.map do |(label, url), i|
-              last = i == items.size - 1
-              tag.li(last || url.nil? ? tag.span(label, "aria-current": (last ? "page" : nil)) : link_to(label, url))
-            end)
-          end
+      content_for(:atu_breadcrumbs) { atu_crumbs_nav(*items) }
+    end
+
+    def atu_crumbs_nav(*items)
+      tag.nav(class: "atu-crumbs", "aria-label": "Breadcrumb") do
+        tag.ol do
+          safe_join(items.each_with_index.map do |(label, url), i|
+            last = i == items.size - 1
+            tag.li(last || url.nil? ? tag.span(label, "aria-current": (last ? "page" : nil)) : link_to(label, url))
+          end)
         end
       end
     end
@@ -282,14 +285,16 @@ module AdministrateThemeUi
       end
     end
 
-    # Sidebar items grouped by config.navigation_groups. Resources without a
-    # dashboard (custom pages such as `get "stats", to: "stats#index"`) are
-    # listed too instead of raising like Administrate's stock nav.
+    # Sidebar items grouped by config.navigation_groups. Resources come from
+    # config.navigation_resources (e.g. a role-filtered list) or, by default, every
+    # routed resource in the namespace. Dashboard-less custom pages are listed too.
     def atu_navigation_groups(namespace)
-      groups = AdministrateThemeUi.config.navigation_groups.transform_values { |v| Array(v).map(&:to_s) }
+      cfg = AdministrateThemeUi.config
+      groups = cfg.navigation_groups.transform_values { |v| Array(v).map(&:to_s) }
       grouped = groups.keys.index_with { [] }
       other = []
-      Administrate::Namespace.new(namespace).resources_with_index_route.each do |resource|
+      resources = cfg.navigation_resources ? instance_exec(&cfg.navigation_resources) : Administrate::Namespace.new(namespace).resources_with_index_route
+      Array(resources).each do |resource|
         item = atu_nav_item(resource)
         next unless item
 
@@ -298,6 +303,36 @@ module AdministrateThemeUi
       end
       grouped["Resources"] = other if other.any?
       grouped.reject { |_g, list| list.empty? }
+    end
+
+    # Links pinned above the groups (config.navigation_pinned), e.g. a dashboard.
+    def atu_navigation_pinned
+      pinned = AdministrateThemeUi.config.navigation_pinned
+      return [] unless pinned
+
+      Array(instance_exec(&pinned)).map { |label, path| { label: label, path: path, active: current_page?(path) } }
+    end
+
+    # Topbar user menu (render it from an app's `_user_menu` partial):
+    #   atu_user_menu(name: current_admin.name, detail: current_admin.role, links: [["Sign out", sign_out_path]])
+    # A link entry may carry link_to options: ["Sign out", path, { method: :delete }].
+    def atu_user_menu(name:, detail: nil, links: [])
+      initials = name.to_s.split.map { |w| w[0] }.first(2).join.upcase
+      tag.details(class: "atu-user", data: { atu_menu: "" }) do
+        safe_join([
+          tag.summary(class: "atu-user__trigger", "aria-label": "Account menu for #{name}") do
+            safe_join([tag.span(initials, class: "atu-user__avatar", "aria-hidden": "true"),
+                       tag.span(class: "atu-user__text") { safe_join([tag.span(name, class: "atu-user__name"), (tag.span(detail, class: "atu-user__detail") if detail)].compact) },
+                       atu_icon("chevron-down", size: 14, class: "atu-user__chevron")])
+          end,
+          tag.div(class: "atu-user__menu", role: "menu") do
+            safe_join([
+              tag.div(class: "atu-user__head") { safe_join([tag.strong(name), (tag.span(detail) if detail)].compact) },
+              *links.map { |label, path, opts| link_to(label, path, { class: "atu-user__item", role: "menuitem" }.merge(opts || {})) }
+            ])
+          end
+        ])
+      end
     end
 
     def atu_nav_item(resource)

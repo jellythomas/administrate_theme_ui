@@ -10,6 +10,16 @@
 
   <nav class="atu-nav">
     <%= content_for(:atu_nav_top) %>
+    <% pinned = atu_navigation_pinned %>
+    <% if pinned.any? %>
+      <div class="atu-nav__group">
+        <% pinned.each do |item| %>
+          <%= link_to item[:path], class: ["atu-nav__link", ("is-active" if item[:active])], "aria-current": (item[:active] ? "page" : nil) do %>
+            <span class="atu-nav__label"><%= item[:label] %></span>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
     <% atu_navigation_groups(namespace).each do |group, items| %>
       <div class="atu-nav__group">
         <p class="atu-nav__heading"><%= group %></p>

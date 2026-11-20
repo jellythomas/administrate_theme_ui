@@ -1,0 +1,27 @@
+<% content_for(:title) { "Legacy page" } %>
+<header class="main-content__header">
+  <h1 class="main-content__page-title">Legacy markup page</h1>
+  <div><a class="button" href="#">Primary</a> <a class="button button--alt" href="#">Alt</a> <a class="button button--danger" href="#">Danger</a></div>
+</header>
+<div class="flashes"><div class="flash flash-notice">Saved successfully.</div><div class="flash flash-error">Something failed.</div></div>
+<section class="main-content__body main-content__body--flush">
+  <table>
+    <thead><tr><th class="cell-label">Name</th><th class="cell-label cell-label--number">Credit limit</th><th class="cell-label">Status</th></tr></thead>
+    <tbody><% @companies.each do |c| %><tr><td class="cell-data"><%= c.name %></td><td class="cell-data cell-data--number"><%= number_with_delimiter(c.credit_limit.to_i, delimiter: ".") %></td><td class="cell-data"><%= c.status %></td></tr><% end %></tbody>
+  </table>
+</section>
+<section class="main-content__body">
+  <dl>
+    <dt class="attribute-label">Name</dt><dd class="attribute-data"><%= @companies.first&.name %></dd>
+    <dt class="attribute-label">Status</dt><dd class="attribute-data"><%= @companies.first&.status %></dd>
+  </dl>
+</section>
+<section class="main-content__body">
+  <form class="form">
+    <div id="error_explanation"><h2>1 error prohibited this from being saved:</h2><ul><li class="flash-error">Name can't be blank</li></ul></div>
+    <div class="field-unit field-unit--string"><div class="field-unit__label"><label>Name</label></div><div class="field-unit__field"><input type="text" value="PT Contoh"></div></div>
+    <div class="field-unit field-unit--select"><div class="field-unit__label"><label>Status</label></div><div class="field-unit__field"><select><option>active</option></select></div></div>
+    <div class="form-actions"><input type="submit" value="Save"></div>
+  </form>
+</section>
+<% if (paged = Company.page(1).per(3)).total_pages > 1 %><%= paginate paged %><% end %>

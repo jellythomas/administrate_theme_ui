@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0
+
+- Navigation hooks: `config.navigation_resources` (e.g. role-filtered menus) and `config.navigation_pinned`.
+- Partial hooks: `_user_menu`, `_index_actions`, `_body_end`; `atu_user_menu` helper (accessible `<details>` dropdown).
+- `compat.css`: styles Administrate's stock markup (headers, buttons, legacy tables, show lists, forms,
+  flashes, `#error_explanation`, Kaminari default pagination, jquery.modal) so customised apps fit the theme.
+- Breadcrumb fallback "app / page title" for pages that set none.
+- README: "How it works" and "Adopting in an app with customised views".
+
 ## 0.1.1
 
 - Licensed under MIT (`LICENSE`).

@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Legacy compatibility. Apps that customised Administrate views keep the stock
+   class names (main-content__header, field-unit, cell-data, button, flash...).
+   These rules map them onto the theme tokens so such pages fit the theme
+   without being rewritten. Scoped to .atu-content, never to atu-* components.
+   ========================================================================== */
+
+/* Page header + body */
+.atu-content .main-content__header {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; margin-bottom: 20px;
+}
+.atu-content .main-content__header > div { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.atu-content .main-content__header form { margin: 0; }
+.atu-content .main-content__page-title {
+  margin: 0; font-family: var(--atu-font-display); font-size: var(--atu-title-size); font-weight: var(--atu-title-weight);
+  letter-spacing: var(--atu-title-tracking); line-height: 1.2; color: var(--atu-text);
+}
+.atu-content .main-content__body {
+  padding: 20px; margin-bottom: 20px; background: var(--atu-surface); border: 1px solid var(--atu-border);
+  border-radius: var(--atu-radius-lg); box-shadow: var(--atu-shadow);
+}
+.atu-content .main-content__body--flush { padding: 0; overflow: hidden; }
+.atu-content .main-content__body + .main-content__body { margin-top: 0; }
+.atu-content hr { border: 0; border-top: 1px solid var(--atu-border); margin: 20px 0; }
+.atu-content h2, .atu-content h3 { font-weight: 600; letter-spacing: -0.005em; margin: 0 0 12px; }
+.atu-content h2 { font-size: 16px; } .atu-content h3 { font-size: 14.5px; }
+
+/* Buttons */
+.atu-content .button, .atu-content a.button, .atu-content input[type="submit"]:not(.atu-btn), .atu-content button.button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 0 12px;
+  font: inherit; font-size: 13px; font-weight: 500; line-height: 1; white-space: nowrap; cursor: pointer;
+  background: var(--atu-primary-bg); color: var(--atu-primary-fg); border: 1px solid transparent; border-radius: var(--atu-radius-sm);
+  text-decoration: none; transition: background .12s;
+}
+.atu-content .button:hover, .atu-content input[type="submit"]:not(.atu-btn):hover { background: var(--atu-primary-hover); color: var(--atu-primary-fg); }
+.atu-content .button.button--alt, .atu-content .button.button--nav {
+  background: var(--atu-surface); color: var(--atu-text); border-color: var(--atu-border-strong);
+}
+.atu-content .button.button--alt:hover, .atu-content .button.button--nav:hover { background: var(--atu-surface-hover); color: var(--atu-text); }
+.atu-content .button.button--danger { background: var(--atu-danger-solid); color: #fff; }
+.atu-content .button.button--danger:hover { filter: brightness(.93); background: var(--atu-danger-solid); color: #fff; }
+.atu-content .button.button--small, .atu-content .button.button-small { height: 28px; padding: 0 10px; font-size: 12.5px; }
+.atu-content .link, .atu-content button.link { background: none; border: 0; padding: 0; font: inherit; color: var(--atu-accent); cursor: pointer; }
+.atu-content .link--danger, .atu-content button.link--danger { color: var(--atu-danger-fg); }
+
+/* Legacy tables (any table that is not .atu-table) */
+.atu-content table:not(.atu-table) { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.atu-content table:not(.atu-table) th {
+  height: 38px; padding: 0 14px; text-align: left; white-space: nowrap; vertical-align: middle;
+  background: var(--atu-surface-2); color: var(--atu-muted); font-size: 12.5px; font-weight: 500; border-bottom: 1px solid var(--atu-border);
+}
+.atu-content table:not(.atu-table) td { padding: 10px 14px; border-bottom: 1px solid var(--atu-border); color: var(--atu-text-2); vertical-align: middle; }
+.atu-content table:not(.atu-table) tbody tr:last-child td { border-bottom: 0; }
+.atu-content table:not(.atu-table) tbody tr:hover { background: var(--atu-surface-hover); }
+.atu-content table:not(.atu-table) th a { color: inherit; display: inline-flex; align-items: center; gap: 4px; }
+.atu-content table:not(.atu-table) th a:hover { color: var(--atu-text); }
+.atu-content .cell-label__sort-indicator svg { width: 12px; height: 12px; }
+.atu-content .cell-label__sort-indicator--desc svg { transform: rotate(180deg); }
+.atu-content table:not(.atu-table) .cell-data--number, .atu-content table:not(.atu-table) .cell-label--number { text-align: right; }
+.atu-content td a.action-show { color: inherit; display: block; }
+.atu-content .main-content__body:not(.main-content__body--flush) > table:not(.atu-table) { margin: -4px 0; }
+.atu-content .main-content__body--flush > table:not(.atu-table) th:first-child,
+.atu-content .main-content__body--flush > table:not(.atu-table) td:first-child { padding-left: 20px; }
+[data-theme="ledger"] .atu-content table:not(.atu-table) th { font-variant: all-small-caps; font-size: 13.5px; letter-spacing: .045em; font-weight: 600; }
+
+/* Legacy show pages: dl > dt.attribute-label + dd.attribute-data */
+.atu-content dl:has(> .attribute-label) { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; margin: 0; }
+.atu-content .attribute-label { padding: 11px 16px 11px 0; color: var(--atu-muted); font-size: 13px; border-top: 1px solid var(--atu-border); }
+.atu-content .attribute-data { margin: 0; padding: 11px 0; color: var(--atu-text); border-top: 1px solid var(--atu-border); word-break: break-word; min-width: 0; }
+.atu-content dl > .attribute-label:first-of-type, .atu-content dl > .attribute-label:first-of-type + .attribute-data { border-top: 0; }
+
+/* Legacy forms: form.form > .field-unit (label + field) */
+.atu-content .form .field-unit, .atu-content form > .field-unit, .atu-content fieldset > .field-unit { margin-bottom: 18px; max-width: 640px; }
+.atu-content .field-unit--nested { border: 1px solid var(--atu-border); border-radius: var(--atu-radius); padding: 16px; margin: 0 0 18px; }
+.atu-content fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.atu-content legend { font-weight: 600; font-size: 14px; margin-bottom: 12px; }
+.atu-content .field-unit__hint { margin-top: 6px; color: var(--atu-muted); font-size: 12.5px; }
+.atu-content .form-actions { display: flex; gap: 8px; align-items: center; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--atu-border); }
+.atu-content input[type="text"]:not(.atu-input), .atu-content input[type="search"]:not(.atu-input), .atu-content input[type="number"]:not(.atu-input),
+.atu-content input[type="email"]:not(.atu-input), .atu-content input[type="date"]:not(.atu-input), .atu-content input[type="datetime-local"]:not(.atu-input),
+.atu-content input[type="password"]:not(.atu-input), .atu-content input[type="tel"]:not(.atu-input), .atu-content input[type="url"]:not(.atu-input),
+.atu-content select:not(.selectized):not(.atu-pager__select):not(.atu-switcher__select), .atu-content textarea {
+  max-width: 100%; height: 36px; padding: 0 11px; font: inherit; font-size: 13.5px; color: var(--atu-text);
+  background-color: var(--atu-surface); border: 1px solid var(--atu-border-strong); border-radius: var(--atu-radius-sm);
+}
+.atu-content textarea { height: auto; min-height: 96px; padding: 9px 11px; }
+.atu-content input:not([type="checkbox"]):not([type="radio"]):focus, .atu-content select:focus, .atu-content textarea:focus { outline: none; border-color: var(--atu-accent); box-shadow: var(--atu-focus); }
+.atu-content label { color: var(--atu-text); font-size: 13px; font-weight: 500; }
+
+/* Legacy search form */
+.atu-content form.search, .atu-content .search-wrapper, .atu-content .search-bar { display: flex; align-items: center; gap: 8px; margin: 0; flex-wrap: wrap; }
+.atu-content .search__eyeglass-icon, .atu-content .search__clear-icon { width: 15px; height: 15px; color: var(--atu-faint); }
+.atu-content .search__input { min-width: 240px; }
+
+/* Flashes / errors */
+.atu-content .flashes { margin-bottom: 16px; display: grid; gap: 8px; }
+.atu-content .flash, .atu-content #error_explanation {
+  padding: 12px 14px; border: 1px solid var(--atu-border); border-left: 3px solid var(--atu-info-solid);
+  border-radius: var(--atu-radius); background: var(--atu-surface); color: var(--atu-text-2); font-size: 13.5px;
+}
+.atu-content .flash-error, .atu-content .flash-alert { border-left-color: var(--atu-danger-solid); }
+.atu-content .flash-notice, .atu-content .flash-success { border-left-color: var(--atu-success-solid); }
+.atu-content .flash-warning { border-left-color: var(--atu-warning-solid); }
+.atu-content #error_explanation { border-left-color: var(--atu-danger-solid); margin-bottom: 20px; }
+.atu-content #error_explanation h2 { font-size: 14px; margin: 0 0 6px; }
+.atu-content #error_explanation ul { margin: 0; padding-left: 18px; }
+.atu-content #error_explanation li.flash-error { padding: 0; border: 0; background: none; color: var(--atu-danger-fg); }
+
+/* Kaminari default theme (apps calling `paginate` directly) */
+.atu-content nav.pagination { display: flex; align-items: center; gap: 4px; padding: 12px 0; font-size: 13px; flex-wrap: wrap; }
+.atu-content nav.pagination > span > a, .atu-content nav.pagination > span.current, .atu-content nav.pagination > span.gap {
+  display: inline-grid; place-items: center; min-width: 32px; height: 32px; padding: 0 8px; border-radius: var(--atu-radius-sm);
+  color: var(--atu-text-2); text-decoration: none; font-variant-numeric: tabular-nums;
+}
+.atu-content nav.pagination > span > a:hover { background: var(--atu-surface-hover); color: var(--atu-text); }
+.atu-content nav.pagination > span.current { background: var(--atu-primary-bg); color: var(--atu-primary-fg); font-weight: 500; }
+
+/* jquery.modal plugin (.jquery-modal.blocker > .modal) */
+.jquery-modal.blocker { background: rgba(9, 9, 11, .5) !important; z-index: 70 !important; }
+.jquery-modal .modal {
+  background: var(--atu-surface) !important; color: var(--atu-text); border-radius: calc(var(--atu-radius-lg) + 2px) !important;
+  box-shadow: var(--atu-shadow-lg) !important; padding: 20px 24px !important; max-width: min(720px, calc(100vw - 32px));
+}
+.jquery-modal .modal a.close-modal { filter: grayscale(1); opacity: .6; }

@@ -3,6 +3,7 @@
 
 <%= atu_page_header(content_for(:title), subtitle: (resources.respond_to?(:total_count) ? "#{number_with_delimiter(resources.total_count, delimiter: AdministrateThemeUi.config.delimiter)} records" : nil)) do %>
   <%= content_for(:header_middle) %>
+  <%= render "index_actions", page: page, resources: resources %>
   <% if accessible_action?(new_resource, :new) %>
     <%= atu_button(t("administrate.actions.new_resource", name: display_resource_name(page.resource_name, singular: true).downcase),
                    [:new, namespace, page.resource_path.to_sym], icon: "plus") %>

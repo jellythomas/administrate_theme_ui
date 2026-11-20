@@ -15,7 +15,8 @@ module AdministrateThemeUi
 
     attr_accessor :app_name, :logo_path, :default_mode, :allow_user_theme_switch,
                   :navigation_groups, :status_tones, :currency_unit, :delimiter, :separator, :number_locale,
-                  :per_page_options, :default_per_page
+                  :per_page_options, :default_per_page,
+                  :navigation_resources, :navigation_pinned
     attr_reader :theme
 
     def initialize
@@ -28,6 +29,11 @@ module AdministrateThemeUi
       @number_locale = "id-ID" # chart axes/tooltips via Intl.NumberFormat
       @per_page_options = [10, 20, 50, 100] # only these ?per_page= values are honoured
       @default_per_page = 20
+      # Proc evaluated in the view (instance_exec) returning the sidebar resources,
+      # e.g. -> { @sidebar_menus } for a role-filtered list. nil = every routed resource.
+      @navigation_resources = nil
+      # Proc evaluated in the view returning [[label, path], ...] pinned above the groups.
+      @navigation_pinned = nil
       @default_mode = :system
       @allow_user_theme_switch = true
       # { "Finance" => %i[transactions repayments], ... } — ungrouped resources land in "Resources".

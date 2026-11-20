@@ -19,4 +19,8 @@ AdministrateThemeUi.configure do |config|
   # Extra status → tone mappings for atu_badge / Field::StatusBadge.
   # Tones: :success, :warning, :danger, :info, :neutral, :accent
   # config.status_tones = { info: %w[sent_to_partner], success: %w[approved_by_partner] }
+
+  # Demo of the navigation hooks: pinned link + an explicit resource list.
+  config.navigation_pinned = -> { [["Overview", admin_stats_path]] }
+  config.navigation_resources = -> { %w[companies loan_requests legacy] }
 end
