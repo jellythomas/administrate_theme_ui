@@ -1,0 +1,35 @@
+import puppeteer from "puppeteer-core";
+const U = process.env.APP_URL || "http://localhost:3999", OUT = process.argv[2];
+const b = await puppeteer.launch({ executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", headless: "new" });
+async function shot(name, path, { theme = "graphite", mode = "light", w = 1440, h = 960, mobile = false, full = false, before } = {}) {
+  const p = await b.newPage();
+  const errs = []; p.on("pageerror", e => errs.push(e.message));
+  await p.setViewport({ width: w, height: h, isMobile: mobile, hasTouch: mobile, deviceScaleFactor: mobile ? 2 : 1 });
+  await p.evaluateOnNewDocument((t, m) => localStorage.setItem("atu:prefs", JSON.stringify({ theme: t, mode: m })), theme, mode);
+  await p.goto(U + path, { waitUntil: "networkidle0" });
+  await p.evaluate(async () => { await document.fonts.load("12px \"ATU Plex Sans\""); await document.fonts.load("600 12px \"ATU Serif\""); await document.fonts.ready; });
+  if (before) await before(p);
+  await new Promise(r => setTimeout(r, 450));
+  const overflow = await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  await p.screenshot({ path: `${OUT}/${name}.png`, fullPage: full });
+  console.log(name, "hOverflow=" + overflow, errs.length ? "ERR " + errs.join("|") : "");
+  await p.close();
+}
+await shot("g-light-stats", "/admin/stats");
+await shot("g-dark-stats", "/admin/stats", { mode: "dark" });
+await shot("l-light-stats", "/admin/stats", { theme: "ledger" });
+await shot("l-dark-stats", "/admin/stats", { theme: "ledger", mode: "dark" });
+await shot("g-light-index", "/admin/loan_requests?per_page=10&_page=2");
+await shot("l-light-index", "/admin/loan_requests?search=pending:", { theme: "ledger" });
+await shot("g-light-show", "/admin/companies/1", { full: true });
+await shot("l-light-form", "/admin/loan_requests/new", { theme: "ledger" });
+await shot("g-modal", "/admin/stats", { before: p => p.click('[data-atu-modal-open="export-modal"]') });
+await shot("l-confirm", "/admin/loan_requests", { theme: "ledger", before: p => p.click("tbody tr form[data-atu-confirm] button") });
+await shot("g-dark-confirm", "/admin/loan_requests", { mode: "dark", before: p => p.click("tbody tr form[data-atu-confirm] button") });
+await shot("m-g-stats", "/admin/stats", { w: 390, h: 844, mobile: true, full: true });
+await shot("m-l-index", "/admin/loan_requests", { theme: "ledger", w: 390, h: 844, mobile: true });
+await shot("m-g-form", "/admin/companies/new", { w: 390, h: 844, mobile: true });
+await shot("m-l-modal", "/admin/stats", { theme: "ledger", w: 390, h: 844, mobile: true, before: p => p.click('[data-atu-modal-open="export-modal"]') });
+await shot("m-g-nav", "/admin/stats", { w: 390, h: 844, mobile: true, before: p => p.click(".atu-topbar [data-atu-sidebar-toggle]") });
+await shot("t-l-stats", "/admin/stats", { theme: "ledger", w: 820, h: 1180, mobile: true });
+await b.close();

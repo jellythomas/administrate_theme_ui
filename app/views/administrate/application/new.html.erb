@@ -1,0 +1,18 @@
+<% content_for(:title) { t("administrate.actions.new_resource", name: display_resource_name(page.resource_name, singular: true)) } %>
+<% atu_crumbs(AdministrateThemeUi.config.app_name, [display_resource_name(page.resource_name), (polymorphic_path([namespace, page.resource.class]) rescue nil)], "New") %>
+
+<%= atu_page_header(content_for(:title)) do %>
+  <%= content_for(:header_middle) %>
+  <%= atu_button(t("administrate.actions.back"), :back, variant: :secondary, icon: "arrow-left") %>
+  <%= content_for(:header_last) %>
+<% end %>
+
+<%= content_for(:before_main) %>
+
+<% if content_for?(:main) %>
+  <%= content_for(:main) %>
+<% else %>
+  <%= render "form", page: page %>
+<% end %>
+
+<%= content_for(:after_main) %>

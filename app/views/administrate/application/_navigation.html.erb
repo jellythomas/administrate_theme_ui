@@ -1,0 +1,32 @@
+<aside class="atu-sidebar" aria-label="Main navigation">
+  <div class="atu-sidebar__brand">
+    <% if AdministrateThemeUi.config.logo_path %>
+      <%= image_tag AdministrateThemeUi.config.logo_path, alt: "", class: "atu-sidebar__logo" %>
+    <% else %>
+      <span class="atu-sidebar__mark"><%= AdministrateThemeUi.config.app_name.to_s.first %></span>
+    <% end %>
+    <span class="atu-sidebar__name"><%= AdministrateThemeUi.config.app_name %><small><%= Rails.env.production? ? "Production" : Rails.env.titleize %></small></span>
+  </div>
+
+  <nav class="atu-nav">
+    <%= content_for(:atu_nav_top) %>
+    <% atu_navigation_groups(namespace).each do |group, items| %>
+      <div class="atu-nav__group">
+        <p class="atu-nav__heading"><%= group %></p>
+        <% items.each do |item| %>
+          <%= link_to item[:path], class: ["atu-nav__link", ("is-active" if item[:active])], "aria-current": (item[:active] ? "page" : nil) do %>
+            <span class="atu-nav__label"><%= item[:label] %></span>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+    <%= content_for(:atu_nav_bottom) %>
+  </nav>
+
+  <% if defined?(root_url) %>
+    <div class="atu-sidebar__footer">
+      <%= link_to root_url, class: "atu-nav__link" do %><%= atu_icon("arrow-left", size: 16) %><span><%= t("administrate.navigation.back_to_app") %></span><% end %>
+    </div>
+  <% end %>
+</aside>
+<div class="atu-sidebar-backdrop" data-atu-sidebar-toggle></div>

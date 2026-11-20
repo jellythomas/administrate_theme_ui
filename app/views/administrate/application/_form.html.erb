@@ -1,0 +1,43 @@
+<%= form_with(model: page.resource, url: [namespace, page.resource], scope: page.resource, local: true, class: "atu-form", data: { atu_form: "" }) do |f| %>
+  <% if page.resource.errors.any? %>
+    <%= atu_alert(tone: :danger, title: t("administrate.form.errors",
+          pluralized_errors: pluralize(page.resource.errors.count, t("administrate.form.error")),
+          resource_name: display_resource_name(page.resource_name, singular: true))) do %>
+      <ul class="atu-alert__list" id="error_explanation">
+        <% page.resource.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
+      </ul>
+    <% end %>
+  <% end %>
+
+  <div class="atu-form__sections">
+    <% page.attributes(controller.action_name).each do |title, attributes| -%>
+      <section class="atu-form__section">
+        <header class="atu-form__aside">
+          <h2 class="atu-form__title"><%= title.present? ? t("helpers.label.#{f.object_name}.#{title}", default: title) : "#{display_resource_name(page.resource_name, singular: true)} details" %></h2>
+          <% desc_key = "administrate.form_sections.#{page.resource_name}.#{title.presence || 'default'}" %>
+          <% if I18n.exists?(desc_key) %><p class="atu-form__desc"><%= I18n.t(desc_key) %></p><% end %>
+        </header>
+        <div class="atu-form__fields">
+          <% attributes.each do |attribute| %>
+            <% errors = atu_field_errors(page.resource, attribute.attribute) %>
+            <div class="atu-field field-unit field-unit--<%= attribute.html_class %> field-unit--<%= requireness(attribute) %><%= " atu-field--invalid" if errors.any? %>">
+              <%= render_field attribute, f: f %>
+              <% hint_key = "administrate.field_hints.#{page.resource_name}.#{attribute.name}" %>
+              <% if errors.any? %>
+                <p class="atu-field__error" role="alert"><%= atu_icon("x-circle", size: 13) %><%= errors.to_sentence %></p>
+              <% elsif I18n.exists?(hint_key) %>
+                <p class="atu-field__hint field-unit__hint"><%= I18n.t(hint_key) %></p>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end -%>
+  </div>
+
+  <div class="atu-form__actions">
+    <span class="atu-form__note"><span class="atu-req">*</span> Required</span>
+    <%= link_to "Cancel", :back, class: "atu-btn atu-btn--secondary" %>
+    <%= f.submit class: "atu-btn atu-btn--primary" %>
+  </div>
+<% end %>

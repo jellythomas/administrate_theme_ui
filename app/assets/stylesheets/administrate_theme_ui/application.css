@@ -1,0 +1,18 @@
+/*
+ *= require administrate_theme_ui/trix
+ *= require administrate_theme_ui/selectize
+ *= require administrate_theme_ui/themes
+ *= require administrate_theme_ui/components
+ *= require administrate_theme_ui/pagination
+ *= require administrate_theme_ui/modal
+ *= require_self
+ */
+
+/* Per-theme component personality (research: Primer Label pill+dot vs. ledger label) */
+[data-theme="graphite"] .atu-badge { border-radius: 999px; padding: 0 8px 0 7px; }
+[data-theme="ledger"] .atu-badge { border-radius: 3px; }
+[data-theme="ledger"] .atu-badge__dot { display: none; }
+[data-theme="ledger"] .atu-th { font-variant: all-small-caps; font-size: 13.5px; letter-spacing: .045em; font-weight: 600; }
+[data-theme="ledger"] .atu-card__title,
+[data-theme="ledger"] .atu-form__title { font-family: var(--atu-font-display); font-size: 16px; font-weight: 600; letter-spacing: -0.005em; }
+[data-theme="ledger"] .atu-stat__label { text-transform: uppercase; font-size: 11px; letter-spacing: .08em; }

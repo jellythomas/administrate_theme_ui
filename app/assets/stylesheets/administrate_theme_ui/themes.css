@@ -1,0 +1,214 @@
+/* Fonts are registered from the layout via the FontFace API (see
+   ComponentsHelper#atu_font_faces_tag): Administrate 1.0's CSS anchor-positioning
+   polyfill rewrites stylesheets into blob: URLs, which breaks url() in @font-face. */
+
+/* ==========================================================================
+   Theme tokens. Components read ONLY these variables.
+   New theme: copy a light/dark block pair, rename data-theme, add the name
+   to AdministrateThemeUi::Configuration::THEMES.
+   ========================================================================== */
+
+/* ---------- Graphite: cool monochrome, ink actions, one blue signal ---------- */
+:root,
+[data-theme="graphite"] {
+  --atu-font: "ATU Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --atu-font-mono: "ATU Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --atu-font-display: var(--atu-font);
+  --atu-font-figures: var(--atu-font);
+  --atu-title-size: 22px;
+  --atu-title-weight: 600;
+  --atu-title-tracking: -0.015em;
+  --atu-figure-weight: 500;
+  --atu-figure-tracking: -0.025em;
+
+  --atu-radius-sm: 6px;
+  --atu-radius: 8px;
+  --atu-radius-lg: 10px;
+  --atu-sidebar-w: 236px;
+  --atu-row-h: 40px;
+
+  --atu-bg: #fafafa;
+  --atu-surface: #ffffff;
+  --atu-surface-2: #f6f6f7;
+  --atu-surface-hover: #f6f6f7;
+  --atu-border: #e7e7ea;
+  --atu-border-strong: #d5d5da;
+  --atu-text: #0a0a0b;
+  --atu-text-2: #3c3c43;
+  --atu-muted: #74747c;
+  --atu-faint: #a2a2aa;
+  --atu-accent: #2563eb;
+  --atu-accent-hover: #1d4ed8;
+  --atu-accent-soft: #eef3ff;
+  --atu-primary-bg: #18181b;
+  --atu-primary-hover: #2b2b30;
+  --atu-primary-fg: #ffffff;
+  --atu-focus: 0 0 0 3px rgba(37, 99, 235, .22);
+  --atu-shadow-sm: 0 1px 1px rgba(10, 10, 11, .04);
+  --atu-shadow: 0 1px 2px rgba(10, 10, 11, .05);
+  --atu-shadow-lg: 0 16px 40px -12px rgba(10, 10, 11, .22), 0 0 0 1px rgba(10, 10, 11, .06);
+
+  --atu-sidebar-bg: #fafafa;
+  --atu-sidebar-border: #e7e7ea;
+  --atu-sidebar-text: #3c3c43;
+  --atu-sidebar-muted: #a2a2aa;
+  --atu-sidebar-hover: #f0f0f2;
+  --atu-sidebar-active-bg: #ffffff;
+  --atu-sidebar-active-fg: #0a0a0b;
+  --atu-sidebar-active-ring: #e7e7ea;
+  --atu-sidebar-active-bar: transparent;
+  --atu-sidebar-mark-bg: #18181b;
+  --atu-sidebar-mark-fg: #ffffff;
+
+  --atu-success-fg: #0f6a4b; --atu-success-bg: #e8f5ef; --atu-success-solid: #16a34a;
+  --atu-warning-fg: #8a4b08; --atu-warning-bg: #fdf3e2; --atu-warning-solid: #d97706;
+  --atu-danger-fg:  #b4232c; --atu-danger-bg:  #fdeced; --atu-danger-solid:  #dc2626;
+  --atu-info-fg:    #1d4ed8; --atu-info-bg:    #ebf1ff; --atu-info-solid:    #2563eb;
+  --atu-neutral-fg: #52525b; --atu-neutral-bg: #f0f0f2; --atu-neutral-solid: #a2a2aa;
+
+  --atu-chart-1: #2563eb; --atu-chart-2: #a1a1aa; --atu-chart-3: #0f766e; --atu-chart-4: #d97706;
+  --atu-chart-5: #7c3aed; --atu-chart-6: #db2777; --atu-chart-7: #52525b; --atu-chart-8: #65a30d;
+  --atu-chart-grid: #ececef;
+}
+
+[data-theme="graphite"][data-mode="dark"] {
+  --atu-bg: #09090b;
+  --atu-surface: #111113;
+  --atu-surface-2: #17171a;
+  --atu-surface-hover: #1a1a1d;
+  --atu-border: #232327;
+  --atu-border-strong: #303036;
+  --atu-text: #f5f5f6;
+  --atu-text-2: #d2d2d7;
+  --atu-muted: #8c8c95;
+  --atu-faint: #5e5e66;
+  --atu-accent: #6d9cff;
+  --atu-accent-hover: #93b5ff;
+  --atu-accent-soft: rgba(109, 156, 255, .12);
+  --atu-primary-bg: #f5f5f6;
+  --atu-primary-hover: #dcdce0;
+  --atu-primary-fg: #09090b;
+  --atu-focus: 0 0 0 3px rgba(109, 156, 255, .3);
+  --atu-shadow-sm: none;
+  --atu-shadow: none;
+  --atu-shadow-lg: 0 20px 48px -12px rgba(0, 0, 0, .8), 0 0 0 1px rgba(255, 255, 255, .06);
+
+  --atu-sidebar-bg: #09090b;
+  --atu-sidebar-border: #1c1c20;
+  --atu-sidebar-text: #c4c4ca;
+  --atu-sidebar-muted: #5e5e66;
+  --atu-sidebar-hover: #141417;
+  --atu-sidebar-active-bg: #18181b;
+  --atu-sidebar-active-fg: #f5f5f6;
+  --atu-sidebar-active-ring: #26262a;
+  --atu-sidebar-mark-bg: #f5f5f6;
+  --atu-sidebar-mark-fg: #09090b;
+
+  --atu-success-fg: #6ee0a6; --atu-success-bg: rgba(22, 163, 74, .14);
+  --atu-warning-fg: #f8c069; --atu-warning-bg: rgba(217, 119, 6, .15);
+  --atu-danger-fg:  #ff9b9b; --atu-danger-bg:  rgba(220, 38, 38, .16);
+  --atu-info-fg:    #93b5ff; --atu-info-bg:    rgba(37, 99, 235, .18);
+  --atu-neutral-fg: #c4c4ca; --atu-neutral-bg: #1f1f23;
+
+  --atu-chart-1: #6d9cff; --atu-chart-2: #63636b; --atu-chart-3: #2dd4bf; --atu-chart-4: #f59e0b;
+  --atu-chart-5: #a78bfa; --atu-chart-6: #f472b6; --atu-chart-7: #a1a1aa; --atu-chart-8: #a3e635;
+  --atu-chart-grid: #1e1e22;
+}
+
+/* ---------- Ledger: warm paper, serif figures, forest green, ink sidebar ---------- */
+[data-theme="ledger"] {
+  --atu-font-display: "ATU Serif", Georgia, "Times New Roman", serif;
+  --atu-font-figures: "ATU Serif", Georgia, "Times New Roman", serif;
+  --atu-title-size: 26px;
+  --atu-title-weight: 600;
+  --atu-title-tracking: -0.01em;
+  --atu-figure-weight: 600;
+  --atu-figure-tracking: -0.01em;
+
+  --atu-radius-sm: 4px;
+  --atu-radius: 5px;
+  --atu-radius-lg: 6px;
+  --atu-sidebar-w: 244px;
+  --atu-row-h: 44px;
+
+  --atu-bg: #f6f4ee;
+  --atu-surface: #fffdf8;
+  --atu-surface-2: #f1eee5;
+  --atu-surface-hover: #f3f0e7;
+  --atu-border: #e3ddcf;
+  --atu-border-strong: #cfc6b2;
+  --atu-text: #1d1b16;
+  --atu-text-2: #413c32;
+  --atu-muted: #78705f;
+  --atu-faint: #a59d8a;
+  --atu-accent: #1f6b4a;
+  --atu-accent-hover: #17543a;
+  --atu-accent-soft: #e5f0e9;
+  --atu-primary-bg: #1e3a2f;
+  --atu-primary-hover: #152b22;
+  --atu-primary-fg: #f6f4ee;
+  --atu-focus: 0 0 0 3px rgba(31, 107, 74, .22);
+  --atu-shadow-sm: none;
+  --atu-shadow: 0 1px 0 rgba(29, 27, 22, .04);
+  --atu-shadow-lg: 0 18px 40px -14px rgba(29, 27, 22, .3), 0 0 0 1px rgba(29, 27, 22, .08);
+
+  --atu-sidebar-bg: #16211c;
+  --atu-sidebar-border: #16211c;
+  --atu-sidebar-text: #c6cfc8;
+  --atu-sidebar-muted: #6b7d73;
+  --atu-sidebar-hover: rgba(255, 255, 255, .05);
+  --atu-sidebar-active-bg: rgba(255, 255, 255, .07);
+  --atu-sidebar-active-fg: #ffffff;
+  --atu-sidebar-active-ring: transparent;
+  --atu-sidebar-active-bar: #7cc4a0;
+  --atu-sidebar-mark-bg: #e9e2cf;
+  --atu-sidebar-mark-fg: #16211c;
+
+  --atu-success-fg: #1f6b4a; --atu-success-bg: #e3efe7; --atu-success-solid: #2f8a5f;
+  --atu-warning-fg: #8c5a0b; --atu-warning-bg: #f6ebd5; --atu-warning-solid: #c08a2e;
+  --atu-danger-fg:  #9f2a1d; --atu-danger-bg:  #f6e3de; --atu-danger-solid:  #b5553c;
+  --atu-info-fg:    #2c5282; --atu-info-bg:    #e5ecf5; --atu-info-solid:    #4a6fa5;
+  --atu-neutral-fg: #57524a; --atu-neutral-bg: #ece8de; --atu-neutral-solid: #a59d8a;
+
+  --atu-chart-1: #1f6b4a; --atu-chart-2: #c08a2e; --atu-chart-3: #6b7f99; --atu-chart-4: #b5553c;
+  --atu-chart-5: #7a9e7e; --atu-chart-6: #8a6fa8; --atu-chart-7: #4a4a42; --atu-chart-8: #d1b06b;
+  --atu-chart-grid: #e8e2d5;
+}
+
+[data-theme="ledger"][data-mode="dark"] {
+  --atu-bg: #121110;
+  --atu-surface: #1a1916;
+  --atu-surface-2: #201f1b;
+  --atu-surface-hover: #23221d;
+  --atu-border: #2d2b25;
+  --atu-border-strong: #3c3930;
+  --atu-text: #ede9df;
+  --atu-text-2: #d1cbbe;
+  --atu-muted: #928a7b;
+  --atu-faint: #635d52;
+  --atu-accent: #74c79e;
+  --atu-accent-hover: #96d8b6;
+  --atu-accent-soft: rgba(116, 199, 158, .12);
+  --atu-primary-bg: #ede9df;
+  --atu-primary-hover: #d8d2c4;
+  --atu-primary-fg: #121110;
+  --atu-focus: 0 0 0 3px rgba(116, 199, 158, .28);
+  --atu-shadow: none;
+  --atu-shadow-lg: 0 20px 48px -12px rgba(0, 0, 0, .8), 0 0 0 1px rgba(255, 255, 255, .06);
+
+  --atu-sidebar-bg: #0c0f0d;
+  --atu-sidebar-border: #1b201d;
+
+  --atu-success-fg: #86d3ab; --atu-success-bg: rgba(47, 138, 95, .18);
+  --atu-warning-fg: #e6bb6c; --atu-warning-bg: rgba(192, 138, 46, .18);
+  --atu-danger-fg:  #f0a08b; --atu-danger-bg:  rgba(181, 85, 60, .2);
+  --atu-info-fg:    #9fbbe3; --atu-info-bg:    rgba(74, 111, 165, .22);
+  --atu-neutral-fg: #d1cbbe; --atu-neutral-bg: #26241f;
+
+  --atu-chart-1: #74c79e; --atu-chart-2: #e0ad55; --atu-chart-3: #9fb3cf; --atu-chart-4: #e08a6f;
+  --atu-chart-5: #a9c9ac; --atu-chart-6: #b9a0d4; --atu-chart-7: #8a857a; --atu-chart-8: #e9cf8f;
+  --atu-chart-grid: #26241f;
+}
+
+[data-mode="dark"] { color-scheme: dark; }
+[data-mode="light"] { color-scheme: light; }

@@ -1,0 +1,22 @@
+<%# Destructive confirmation (Primer ConfirmationDialog / Geist): alertdialog role, Cancel focused,
+    backdrop click does not dismiss, verb+noun action label, optional type-to-confirm. %>
+<dialog class="atu-modal atu-modal--sm" id="atu-confirm" role="alertdialog" aria-labelledby="atu-confirm-title" aria-describedby="atu-confirm-message" data-atu-static>
+  <div class="atu-modal__panel">
+    <header class="atu-modal__header">
+      <div class="atu-confirm__icon"><%= atu_icon("alert", size: 18) %></div>
+      <h1 class="atu-modal__title" id="atu-confirm-title" data-atu-confirm-title>Are you sure?</h1>
+    </header>
+    <div class="atu-modal__body">
+      <p id="atu-confirm-message" data-atu-confirm-message></p>
+      <p class="atu-confirm__note">This cannot be undone.</p>
+      <div class="atu-confirm__type" data-atu-confirm-type hidden>
+        <label for="atu-confirm-input">Type <strong data-atu-confirm-expected></strong> to confirm</label>
+        <input id="atu-confirm-input" class="atu-input" autocomplete="off" spellcheck="false" data-atu-confirm-input>
+      </div>
+    </div>
+    <footer class="atu-modal__footer">
+      <button type="button" class="atu-btn atu-btn--secondary" data-atu-modal-close data-atu-confirm-cancel>Cancel</button>
+      <button type="button" class="atu-btn atu-btn--danger" data-atu-confirm-accept>Delete</button>
+    </footer>
+  </div>
+</dialog>

@@ -1,0 +1,8 @@
+<div class="field-unit__label"><%= f.label field.attribute %></div>
+<div class="field-unit__field">
+  <% if field.selectable_options.any? %>
+    <%= f.select field.attribute, field.selectable_options, include_blank: true %>
+  <% else %>
+    <%= f.text_field field.attribute %>
+  <% end %>
+</div>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<%= tag.html(**atu_html_attributes) do %>
+<head>
+  <meta charset="utf-8">
+  <meta name="ROBOTS" content="NOODP">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= content_for(:title) %> - <%= AdministrateThemeUi.config.app_name.presence || application_title %></title>
+  <%= javascript_tag nonce: true do %>
+    (function () {
+      var d = document.documentElement, s = {};
+      try { s = JSON.parse(localStorage.getItem("atu:prefs") || "{}"); } catch (e) {}
+      if (s.theme && d.dataset.themeSwitch === "true") d.dataset.theme = s.theme;
+      var m = s.mode || d.dataset.modeDefault;
+      if (m === "system" || !m) m = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      d.dataset.mode = m;
+      if (s.sidebar === "collapsed") d.dataset.sidebar = "collapsed";
+    })();
+  <% end %>
+  <%= atu_font_faces_tag %>
+  <%= render "stylesheet" %>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag if defined?(csp_meta_tag) %>
+  <%= render "javascript" %>
+</head>
+<body class="atu">
+  <%= render "icons" %>
+  <a class="atu-skip" href="#atu-main">Skip to content</a>
+
+  <div class="atu-shell">
+    <%= render "navigation" -%>
+
+    <div class="atu-main">
+      <%= render "topbar" %>
+      <main class="atu-content" id="atu-main">
+        <%= render "flashes" -%>
+        <%= yield %>
+      </main>
+    </div>
+  </div>
+
+  <%= render "confirm_dialog" %>
+</body>
+<% end %>

@@ -1,0 +1,11 @@
+<form class="atu-search" role="search">
+  <label class="atu-visually-hidden" for="search"><%= t("administrate.search.label", resource: resource_name) %></label>
+  <%= atu_icon("search", size: 15, class: "atu-search__icon") %>
+  <input class="atu-input atu-search__input" id="search" type="search" name="search" autocomplete="off" data-atu-search
+         placeholder="<%= t("administrate.search.label", resource: resource_name) %>" value="<%= search_term %>">
+  <% if search_term.present? %>
+    <%= link_to clear_search_params, class: "atu-search__clear", "aria-label": t("administrate.search.clear") do %><%= atu_icon("x", size: 13) %><% end %>
+  <% else %>
+    <kbd class="atu-kbd atu-search__kbd" title="Press / to search">/</kbd>
+  <% end %>
+</form>

@@ -1,0 +1,46 @@
+<% content_for(:title) { t("administrate.actions.show_resource", name: page.page_title) } %>
+<% index_path = (polymorphic_path([namespace, page.resource.class]) rescue nil) %>
+<% atu_crumbs(AdministrateThemeUi.config.app_name, [display_resource_name(page.resource_name), index_path], page.page_title) %>
+
+<%= atu_page_header(page.page_title, subtitle: display_resource_name(page.resource_name, singular: true)) do %>
+  <%= content_for(:header_middle) %>
+  <% if accessible_action?(page.resource, :destroy) %>
+    <%= button_to [namespace, page.resource], method: :delete, class: "atu-btn atu-btn--ghost-danger",
+                  form: { data: { atu_confirm: "#{page.page_title} will be permanently deleted.", atu_confirm_title: "Delete #{page.page_title}?", atu_confirm_action: "Delete #{display_resource_name(page.resource_name, singular: true).downcase}" } } do %>
+      <%= atu_icon("trash", size: 15) %><%= t("administrate.actions.destroy") %>
+    <% end %>
+  <% end %>
+  <% if accessible_action?(page.resource, :edit) %>
+    <%= atu_button(t("administrate.actions.edit"), [:edit, namespace, page.resource], icon: "edit") %>
+  <% end %>
+  <%= content_for(:header_last) %>
+<% end %>
+
+<%= content_for(:before_main) %>
+
+<% if content_for?(:main) %>
+  <%= content_for(:main) %>
+<% else %>
+  <% page.attributes.each do |title, attributes| %>
+    <% collections, scalars = attributes.partition { |a| a.is_a?(Administrate::Field::HasMany) } %>
+    <% if scalars.any? %>
+      <%= atu_card(title: (title.present? ? t("helpers.label.#{page.resource_name}.#{title}", default: title) : "Details")) do %>
+        <dl class="atu-dl">
+          <% scalars.each do |attribute| %>
+            <div class="atu-dl__row">
+              <dt class="atu-dl__term" id="<%= attribute.name %>"><%= t("helpers.label.#{resource_name}.#{attribute.name}", default: page.resource.class.human_attribute_name(attribute.name)) %></dt>
+              <dd class="atu-dl__desc attribute-data--<%= attribute.html_class %>"><%= render_field attribute, page: page %></dd>
+            </div>
+          <% end %>
+        </dl>
+      <% end %>
+    <% end %>
+    <% collections.each do |attribute| %>
+      <%= atu_card(title: page.resource.class.human_attribute_name(attribute.name), subtitle: ("#{attribute.data.size} records" if attribute.data.respond_to?(:size)), flush: true, class: "atu-card--table") do %>
+        <%= render_field attribute, page: page %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<%= content_for(:after_main) %>

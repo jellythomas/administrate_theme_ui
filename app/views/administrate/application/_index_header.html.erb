@@ -1,0 +1,20 @@
+<% content_for(:title) { display_resource_name(page.resource_name) } %>
+<% atu_crumbs(AdministrateThemeUi.config.app_name, display_resource_name(page.resource_name)) %>
+
+<%= atu_page_header(content_for(:title), subtitle: (resources.respond_to?(:total_count) ? "#{number_with_delimiter(resources.total_count, delimiter: AdministrateThemeUi.config.delimiter)} records" : nil)) do %>
+  <%= content_for(:header_middle) %>
+  <% if accessible_action?(new_resource, :new) %>
+    <%= atu_button(t("administrate.actions.new_resource", name: display_resource_name(page.resource_name, singular: true).downcase),
+                   [:new, namespace, page.resource_path.to_sym], icon: "plus") %>
+  <% end %>
+  <%= content_for(:header_last) %>
+<% end %>
+
+<%= atu_filter_tabs(filters, search_term) %>
+
+<% if show_search_bar %>
+  <div class="atu-toolbar">
+    <%= render("search", search_term: search_term, resource_name: display_resource_name(page.resource_name)) %>
+    <%= content_for(:atu_toolbar_end) %>
+  </div>
+<% end %>

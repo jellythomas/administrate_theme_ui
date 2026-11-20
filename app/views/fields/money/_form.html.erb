@@ -1,0 +1,5 @@
+<div class="field-unit__label"><%= f.label field.attribute %></div>
+<div class="field-unit__field atu-affix">
+  <span class="atu-affix__unit" aria-hidden="true"><%= field.unit %></span>
+  <%= f.number_field field.attribute, step: (field.precision.zero? ? 1 : 10.0**-field.precision), inputmode: "decimal" %>
+</div>

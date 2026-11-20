@@ -1,0 +1,15 @@
+<div class="atu-switcher" data-atu-theme-switcher>
+  <% if AdministrateThemeUi.config.allow_user_theme_switch %>
+    <label class="atu-visually-hidden" for="atu-theme-select">Theme</label>
+    <select id="atu-theme-select" class="atu-switcher__select" data-atu-theme-select>
+      <% AdministrateThemeUi::Configuration::THEMES.each do |t| %>
+        <option value="<%= t %>"><%= t.to_s.titleize %></option>
+      <% end %>
+    </select>
+  <% end %>
+  <div class="atu-segmented" role="radiogroup" aria-label="Color mode">
+    <% { light: "sun", dark: "moon", system: "monitor" }.each do |mode, icon| %>
+      <button type="button" role="radio" class="atu-segmented__btn" data-atu-mode="<%= mode %>" aria-label="<%= mode.to_s.titleize %> mode" title="<%= mode.to_s.titleize %>"><%= atu_icon(icon, size: 16) %></button>
+    <% end %>
+  </div>
+</div>

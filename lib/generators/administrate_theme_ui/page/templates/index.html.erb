@@ -1,0 +1,19 @@
+<%% content_for(:title) { "<%= human_name %>" } %>
+
+<%%= atu_page_header("<%= human_name %>", subtitle: "Overview") do %>
+  <%%= atu_button("Refresh", request.path, variant: :secondary, icon: "refresh") %>
+<%% end %>
+
+<%%= atu_stat_grid do %>
+  <%%= atu_stat_card(label: "Total", value: number_with_delimiter(@stats[:total]), icon: "wallet") %>
+  <%%= atu_stat_card(label: "This month", value: number_with_delimiter(@stats[:this_month]), icon: "calendar", tone: :info) %>
+<%% end %>
+
+<div class="atu-grid">
+  <%%= atu_card(title: "Trend", class: "atu-col-8") do %>
+    <%%= atu_chart(type: :area, labels: @trend[:labels], datasets: [{ label: "Value", data: @trend[:values] }]) %>
+  <%% end %>
+  <%%= atu_card(title: "Breakdown", class: "atu-col-4") do %>
+    <%%= atu_chart(type: :doughnut, labels: %w[A B], datasets: [{ label: "Share", data: [1, 1] }]) %>
+  <%% end %>
+</div>

@@ -1,0 +1,15 @@
+<% can_edit = existing_action?(collection_presenter.resource_name, :edit) %>
+<% can_destroy = existing_action?(collection_presenter.resource_name, :destroy) %>
+<% if can_edit || can_destroy %>
+  <td class="atu-td atu-td--actions">
+    <div class="atu-row-actions">
+      <% if can_edit && accessible_action?(resource, :edit) %>
+        <%= link_to [:edit, namespace, resource], class: "atu-iconbtn action-edit", title: t("administrate.actions.edit"), "aria-label": t("administrate.actions.edit") do %><%= atu_icon("edit", size: 16) %><% end %>
+      <% end %>
+      <% if can_destroy && accessible_action?(resource, :destroy) %>
+        <%= button_to [namespace, resource], method: :delete, class: "atu-iconbtn atu-iconbtn--danger", title: t("administrate.actions.destroy"), "aria-label": t("administrate.actions.destroy"),
+                      form: { data: { atu_confirm: "#{display_resource_name(collection_presenter.resource_name, singular: true)} ##{resource.id} will be permanently deleted.", atu_confirm_title: "Delete #{display_resource_name(collection_presenter.resource_name, singular: true).downcase}?", atu_confirm_action: "Delete #{display_resource_name(collection_presenter.resource_name, singular: true).downcase}" } } do %><%= atu_icon("trash", size: 16) %><% end %>
+      <% end %>
+    </div>
+  </td>
+<% end %>

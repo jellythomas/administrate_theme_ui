@@ -1,0 +1,40 @@
+/* ==========================================================================
+   Table pagination bar — Carbon data-table pagination anatomy:
+   items-per-page · range · page x of y · prev/next. Height = table row height,
+   attached directly under the table. A11y per Primer: nav[aria-label],
+   aria-current, 24px+ targets, aria-disabled at the ends.
+   ========================================================================== */
+.atu-pager {
+  display: flex; align-items: stretch; justify-content: space-between; gap: 0 16px; flex-wrap: wrap;
+  min-height: 44px; padding: 0 0 0 20px;
+  border-top: 1px solid var(--atu-border); background: var(--atu-surface);
+  font-size: 13px; color: var(--atu-muted); font-variant-numeric: tabular-nums;
+}
+.atu-pager__start, .atu-pager__end { display: flex; align-items: center; gap: 14px; min-height: 44px; }
+.atu-pager__size, .atu-pager__jump { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
+.atu-pager__size label { white-space: nowrap; }
+.atu-pager__divider { width: 1px; align-self: stretch; margin: 10px 0; background: var(--atu-border); }
+.atu-pager__range { color: var(--atu-text-2); white-space: nowrap; }
+.atu-pager__page { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.atu-pager__page strong { color: var(--atu-text); font-weight: 500; }
+.atu-pager__select {
+  height: 28px; padding: 0 24px 0 8px; font: inherit; font-size: 13px; color: var(--atu-text); font-variant-numeric: tabular-nums;
+  background: var(--atu-surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23888' stroke-width='1.6'%3E%3Cpath d='m3 4.5 3 3 3-3'/%3E%3C/svg%3E") no-repeat right 6px center;
+  border: 1px solid var(--atu-border-strong); border-radius: var(--atu-radius-sm); appearance: none; cursor: pointer;
+}
+.atu-pager__select:hover { border-color: var(--atu-faint); }
+.atu-pager__select:focus { outline: none; border-color: var(--atu-accent); box-shadow: var(--atu-focus); }
+.atu-pager__nav { display: flex; align-self: stretch; border-left: 1px solid var(--atu-border); }
+.atu .atu-pager__btn {
+  display: grid; place-items: center; width: 44px; min-height: 44px; color: var(--atu-text);
+  border-left: 1px solid var(--atu-border); transition: background .1s;
+}
+.atu .atu-pager__btn:first-child { border-left: 0; }
+.atu .atu-pager__btn:hover { background: var(--atu-surface-hover); color: var(--atu-text); }
+.atu .atu-pager__btn[aria-disabled="true"] { color: var(--atu-faint); opacity: .5; cursor: not-allowed; background: none; }
+.atu-card--table .atu-pager { border-radius: 0 0 var(--atu-radius-lg) var(--atu-radius-lg); }
+
+@media (max-width: 720px) {
+  .atu-pager__size, .atu-pager__divider { display: none; }   /* Carbon: drop items-per-page on small screens */
+  .atu-pager__nav .atu-pager__btn:first-child, .atu-pager__nav .atu-pager__btn:last-child { display: none; }
+}

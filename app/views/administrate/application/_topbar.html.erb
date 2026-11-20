@@ -1,0 +1,12 @@
+<%# Override this partial, or use content_for :atu_topbar / :atu_topbar_end, to add a user menu, env badge, etc. %>
+<div class="atu-topbar">
+  <button type="button" class="atu-iconbtn" data-atu-sidebar-toggle aria-label="Toggle navigation" title="Toggle navigation"><%= atu_icon("sidebar", size: 17) %></button>
+  <span class="atu-topbar__sep" aria-hidden="true"></span>
+  <div class="atu-topbar__slot">
+    <%= content_for?(:atu_breadcrumbs) ? content_for(:atu_breadcrumbs) : content_for(:atu_topbar) %>
+  </div>
+  <div class="atu-topbar__end">
+    <%= content_for(:atu_topbar_end) %>
+    <%= render "theme_switcher" %>
+  </div>
+</div>

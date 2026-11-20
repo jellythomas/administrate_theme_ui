@@ -1,0 +1,52 @@
+<% content_for(:title) { "Dashboard" } %>
+<% atu_crumbs(AdministrateThemeUi.config.app_name, "Dashboard") %>
+
+<%= atu_page_header("Lending overview", subtitle: "All companies · last 12 months") do %>
+  <%= atu_modal_trigger("Export", "export-modal", icon: "download") %>
+  <%= atu_button("New loan", new_admin_loan_request_path, icon: "plus") %>
+<% end %>
+
+<%= atu_alert(tone: :warning, title: "Disbursement SLA at risk", dismissible: true) do %>
+  2 requests have been waiting more than 3 days. <%= link_to "Review pending", admin_loan_requests_path(search: "pending:") %>
+<% end %>
+
+<%= atu_stat_grid do %>
+  <%= atu_stat_card(label: "Active facility limit", value: atu_money(@stats[:limit]), link: admin_companies_path, link_text: "#{@stats[:companies]} companies") %>
+  <%= atu_stat_card(label: "Total disbursed", value: atu_money(@stats[:disbursed]), delta: 12.4, delta_label: "vs last month", spark: @trend[:amount], tone: :success) %>
+  <%= atu_stat_card(label: "Outstanding", value: atu_money(@stats[:outstanding]), delta: -3.1, delta_label: "vs last month", spark: @trend[:amount].reverse) %>
+  <%= atu_stat_card(label: "Awaiting approval", value: @stats[:pending], hint: "requests", link: admin_loan_requests_path(search: "pending:"), link_text: "Review") %>
+<% end %>
+
+<div class="atu-grid">
+  <%= atu_card(title: "Loan volume", subtitle: "Disbursed amount and request count per month", class: "atu-col-8") do %>
+    <%= atu_chart(type: :bar, labels: @trend[:labels], money: true, height: 280, datasets: [
+          { label: "Amount (Rp)", data: @trend[:amount] },
+          { label: "Requests", data: @trend[:count], type: "line", yAxisID: "y1" }
+        ], options: { scales: { y1: { position: "right", beginAtZero: true } } }) %>
+  <% end %>
+  <%= atu_card(title: "Status breakdown", subtitle: "#{@by_status.values.sum} loan requests", class: "atu-col-4") do %>
+    <%= atu_distribution(@by_status) %>
+  <% end %>
+</div>
+
+<%= atu_card(title: "Recent requests", flush: true, class: "atu-card--table", actions: link_to(safe_join(["View all ", atu_icon("arrow-right", size: 13)]), admin_loan_requests_path)) do %>
+  <div class="atu-table-wrap"><table class="atu-table">
+    <thead><tr><th class="atu-th atu-th--number">Loan</th><th class="atu-th">Company</th><th class="atu-th atu-th--number">Amount</th><th class="atu-th">Status</th><th class="atu-th">Requested</th></tr></thead>
+    <tbody>
+      <% @recent.each do |l| %>
+        <tr data-url="<%= admin_loan_request_path(l) %>" tabindex="0">
+          <td class="atu-td atu-td--number">#<%= l.id %></td>
+          <td class="atu-td"><%= l.company.name %></td>
+          <td class="atu-td atu-td--number"><%= atu_money(l.amount) %></td>
+          <td class="atu-td"><%= atu_badge(l.status) %></td>
+          <td class="atu-td atu-muted"><%= l.created_at.strftime("%-d %b %Y") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table></div>
+<% end %>
+
+<%= atu_modal(id: "export-modal", title: "Export loan requests", description: "Choose a format and date range.",
+              footer: safe_join([atu_button("Cancel", nil, variant: :secondary, data: { atu_modal_close: "" }), atu_button("Export CSV", nil, icon: "download")])) do %>
+  <p>Exports every loan request matching the current filters. Exports over 10,000 rows are emailed to you when ready.</p>
+<% end %>
