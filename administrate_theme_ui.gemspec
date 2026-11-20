@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
                   "Dashboards, fields, controllers and administrate:* generators keep working unchanged."
   s.authors     = ["Jelly Thomas"]
   s.homepage    = "https://github.com/jellythomas/administrate_theme_ui"
-  s.license     = "Nonstandard" # no licence chosen yet; bundled fonts are SIL OFL 1.1, Chart.js is MIT
-  s.files       = Dir["{app,lib,vendor}/**/*", "README.md", "CHANGELOG.md"]
+  s.license     = "MIT" # bundled fonts are SIL OFL 1.1, Chart.js is MIT (see README)
+  s.files       = Dir["{app,lib,vendor}/**/*", "README.md", "CHANGELOG.md", "LICENSE"]
   s.require_paths = ["lib"]
   s.required_ruby_version = ">= 3.1"
 

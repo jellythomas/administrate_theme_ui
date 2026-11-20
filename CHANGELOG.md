@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.1.0 — unreleased
+## 0.1.1
+
+- Licensed under MIT (`LICENSE`).
+
+## 0.1.0
 
 - Graphite and Ledger themes, each with light/dark palettes; per-user theme/mode stored in localStorage.
 - Full Administrate view layer: layout, sidebar, topbar with breadcrumbs, index (filter tabs, search, table,

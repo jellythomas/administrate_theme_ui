@@ -9,7 +9,7 @@ A UI layer for [Administrate](https://github.com/thoughtbot/administrate) 1.x th
 ```ruby
 # Gemfile
 gem "administrate", "~> 1.0"
-gem "administrate_theme_ui", git: "https://github.com/jellythomas/administrate_theme_ui.git", tag: "v0.1.0"
+gem "administrate_theme_ui", git: "https://github.com/jellythomas/administrate_theme_ui.git", tag: "v0.1.1"
 ```
 
 ```sh
@@ -122,3 +122,7 @@ IBM Plex Sans/Mono 5.3.0 and Source Serif 4 5.3.1 are bundled under the SIL Open
 ## Requirements
 
 Requires Administrate 1.x, Rails 7 or later, and sprockets-rails. The CSS is plain and the JS is vanilla, so there is no Node or Tailwind build step. It works with Turbo (which Administrate 1.0 ships) and with plain page loads.
+
+## License
+
+MIT © Jelly Thomas. See `LICENSE`. Bundled third-party assets keep their own licences (see above).
