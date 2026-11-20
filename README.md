@@ -9,7 +9,7 @@ A UI layer for [Administrate](https://github.com/thoughtbot/administrate) 1.x th
 ```ruby
 # Gemfile
 gem "administrate", "~> 1.0"
-gem "administrate_theme_ui", git: "https://github.com/jellythomas/administrate_theme_ui.git", tag: "v0.2.0"
+gem "administrate_theme_ui", git: "https://github.com/jellythomas/administrate_theme_ui.git", tag: "v0.3.0"
 ```
 
 ```sh
@@ -29,8 +29,8 @@ The gem is a Rails engine loaded after Administrate's. It changes the presentati
 2. **Assets.** At boot it removes `administrate/application` from `Administrate::Engine.stylesheets`, adds its own stylesheet, and appends its JavaScript next to Administrate's. Administrate's JS (Turbo, Stimulus, Selectize, Trix) keeps working, and the gem restyles Selectize and Trix. Its own JS is plain vanilla with no build step. It also works without Turbo, for example when an app replaces Administrate's JS with jQuery/UJS.
 3. **Theming.** Every colour, radius and font comes from CSS custom properties keyed on `<html data-theme="graphite|ledger" data-mode="light|dark">`. A small inline script in `<head>` reads the user's choice from `localStorage` and sets those attributes before first paint. Charts read the same variables and redraw when they change.
 4. **Fonts.** The bundled fonts are registered with the JavaScript FontFace API instead of `@font-face`. Administrate 1.0's CSS anchor-positioning polyfill rewrites stylesheets into `blob:` URLs, which would break `url()` inside `@font-face`.
-5. **Controller.** One method is prepended into `Administrate::ApplicationController`. `#records_per_page` only accepts `config.per_page_options`, because Administrate otherwise passes `?per_page=` to Kaminari unbounded. A `records_per_page` defined in your own controllers still takes precedence.
-6. **Fields.** `Field::StatusBadge` and `Field::Money` are ordinary Administrate fields with their own partials.
+5. **Behaviour is Administrate's.** The gem adds no controller code and no interaction logic of its own. Row clicks use Administrate's Stimulus `table` controller. Search and `COLLECTION_FILTERS` use Administrate's search, with its filter help popover. Destroy uses Administrate's confirm message through `data-turbo-confirm` (and `data-confirm` for rails-ujs/jquery_ujs apps). Pagination is Administrate's Kaminari `paginate`, and flashes render inline as in Administrate. The only JavaScript hook it uses is `Turbo.setConfirmMethod`, so the confirm prompt appears in a styled dialog instead of `window.confirm`.
+6. **Fields.** `Field::StatusBadge` and `Field::Money` are optional, ordinary Administrate fields with their own partials.
 
 ## Configuration
 
@@ -42,8 +42,6 @@ AdministrateThemeUi.configure do |config|
   config.allow_user_theme_switch = true  # users may pick another theme locally
   config.navigation_groups = { "Finance" => %i[transactions repayments], "Accounts" => %i[companies users] }
   config.status_tones = { info: %w[sent_to_partner] }
-  config.per_page_options = [10, 20, 50, 100]  # the only accepted ?per_page= values
-  config.default_per_page = 20
 
   # Sidebar contents (both procs run inside the view, so helpers and ivars work):
   config.navigation_resources = -> { @sidebar_menus }          # e.g. a role-filtered list; default = all routed resources
@@ -81,13 +79,13 @@ Helpers are available in every Administrate view, including custom pages under t
 | Status badge | `atu_badge("approved")` picks its tone automatically, or pass `tone: :warning` |
 | Status column in a dashboard | `status: Field::StatusBadge.with_options(collection: %w[...], tones: { info: %w[...] })` |
 | Alerts | `atu_alert("msg", tone: :success/:warning/:danger/:info, title:, dismissible: true)` |
-| Toasts | Standard `flash[:notice]` / `flash[:alert]` messages become toasts that dismiss themselves |
+| Flash messages | `flash[:notice]` / `flash[:alert]` render inline at the top of the page, styled by tone, persistent (as in Administrate) |
 | Modal | `atu_modal(id:, title:, description:, size: :sm/:md/:lg/:xl, footer:, static: false) { }` + `atu_modal_trigger("Open", id)`. Sizes are 400, 560, 720 and 960px. Footer: Cancel first, primary last. Becomes a bottom sheet on phones |
-| Destructive confirm | `form: { data: { atu_confirm: "Loan #12 will be permanently deleted.", atu_confirm_title: "Delete loan?", atu_confirm_action: "Delete loan", atu_confirm_type: "LOAN-12" } }` on `button_to`, or `data-atu-confirm*` on a link. Cancel gets focus, clicking the backdrop doesn't dismiss it, and the optional `atu_confirm_type` requires typing that text first. JS: `AdministrateThemeUi.confirm({message:, title:, action:, expect:}, fn)` |
+| Destroy confirm | Same as Administrate: `data: { turbo_confirm: t("administrate.actions.confirm") }`. With Turbo, the prompt shows in a styled dialog (Cancel focused, Esc cancels); without Turbo, rails-ujs/jquery_ujs use `data-confirm` |
 | Empty state | `atu_empty_state(title:, description:, icon:) { action }` |
-| Filters | Generated from the dashboard's `COLLECTION_FILTERS` as tabs ("All" + one per filter); other search words are kept |
-| Pagination | Bar under every table: rows-per-page selector, a "1–20 of 1,234" range, "Page [n] of N", and first/prev/next/last buttons (disabled at the ends) |
-| Keyboard | `/` focuses search, Enter or Space opens a focused row, Esc closes dialogs |
+| Filters | Administrate's search syntax (`rejected:`, `status:active`) from the dashboard's `COLLECTION_FILTERS`, with Administrate's help popover listing them |
+| Pagination | Administrate's Kaminari `paginate` (numbered pages, first/prev/next/last), styled, under each table with a "1–20 of 1,234" range. `?per_page=` works as in Administrate |
+| Keyboard | As in Administrate: Enter/Space on a focused row opens it; Esc closes dialogs |
 | Inline form errors | Built in: each invalid field shows its own message plus a summary at the top |
 | Icons | `atu_icon("wallet")`. The list of available names is in `_icons.html.erb` |
 
@@ -106,11 +104,16 @@ Custom pages without a dashboard class (for example `get "stats"`) appear in the
 
 ## Design references
 
-The component specs follow published design systems. Pagination uses the table pattern from IBM Carbon, with accessibility rules from GitHub Primer. Modals follow the anatomy, button order and close behaviour of Carbon and Atlassian, and their motion timings come from Carbon. The destructive-confirm pattern (Cancel focused, type-to-confirm, a verb plus noun label) comes from Primer ConfirmationDialog and Vercel Geist. Toast timing follows Polaris (5s) and Carbon (errors stay until dismissed). Badge styles are based on Primer Label and Stripe Badge.
+The visual specs follow published design systems. Pagination styling follows the accessibility rules of GitHub Primer. Modals follow the anatomy, button order and close behaviour of Carbon and Atlassian, and their motion timings come from Carbon. The confirm dialog focuses Cancel first, following Primer ConfirmationDialog. Badge styles are based on Primer Label and Stripe Badge.
 
 ## Security note
 
-Administrate passes `params[:per_page]` straight to Kaminari. This gem limits it to `config.per_page_options`, and any other value falls back to `config.default_per_page`. If you also call Kaminari outside Administrate controllers, set `Kaminari.configure { |c| c.max_per_page = 100 }` as a global backstop.
+Administrate passes `params[:per_page]` straight to Kaminari, so anyone can request a very large page. The gem keeps Administrate's behaviour, so cap it in your app:
+
+```ruby
+# config/initializers/kaminari.rb
+Kaminari.configure { |c| c.max_per_page = 100 }
+```
 
 The gem only changes how buttons and links look. Whether a New, Edit or Delete button shows is still decided by Administrate's `accessible_action?`, which you wire to your policy library by overriding `authorized_action?` in your admin `ApplicationController`. Your controllers keep enforcing authorization either way.
 
@@ -140,7 +143,7 @@ Most real admins have years of custom Administrate views. You don't have to rewr
 ```sh
 ruby -Ilib test/configuration_test.rb
 cd test/dummy && bin/rails db:setup && bin/rails s -p 3999   # http://localhost:3999/admin/stats
-cd test/e2e && npm i && node e2e.mjs            # 36 browser checks (themes, modal, confirm, pager, tabs…)
+cd test/e2e && npm i && node e2e.mjs            # browser checks (themes, Administrate behaviour, pager, confirm…); NO_TURBO=1 for jQuery/UJS hosts
 node shots.mjs ./shots                           # screenshots: both themes, light and dark, desktop/tablet/phone
 ```
 

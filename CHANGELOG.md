@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.3.0
+
+Behaviour now follows Administrate exactly; the gem only changes presentation.
+
+- Destroy: Administrate's `data-turbo-confirm` message (plus `data-confirm` for rails-ujs/jquery_ujs);
+  the Turbo confirm is shown in a styled dialog via `Turbo.setConfirmMethod`. Removed custom
+  confirm titles/labels and type-to-confirm.
+- Row click: Administrate's Stimulus `table` controller (custom JS handler removed). Row destroy is a
+  link with Rails method/confirm attributes so the controller doesn't treat it as a row click.
+- Filters: Administrate's search syntax and filter help popover (tabs removed).
+- Pagination: Administrate's Kaminari `paginate`, styled (rows-per-page selector and page jump removed).
+- Flashes: inline and persistent (toasts removed).
+- Removed: `?per_page=` clamp (documented a Kaminari cap instead), `/` search shortcut, form Cancel link.
+- Fixed: helpers accidentally dropped in 0.2.0 (`atu_chart`, `atu_alert`, `atu_modal`,
+  `atu_modal_trigger`, `atu_empty_state`) restored; guarded by `test/helper_api_test.rb`.
+
 ## 0.2.0
 
 - Navigation hooks: `config.navigation_resources` (e.g. role-filtered menus) and `config.navigation_pinned`.

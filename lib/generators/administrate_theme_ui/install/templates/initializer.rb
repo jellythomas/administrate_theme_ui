@@ -12,10 +12,6 @@ AdministrateThemeUi.configure do |config|
   config.delimiter = "."
   config.separator = ","
 
-  # Page sizes users may pick. Any other ?per_page= value falls back to the default,
-  # so nobody can request an unbounded page.
-  config.per_page_options = [10, 20, 50, 100]
-  config.default_per_page = 20
 
   # Default colour mode until a user picks one: :light, :dark or :system.
   # Each user's choice (and theme, if switching is allowed) is kept in their browser's localStorage.

@@ -1,70 +1,10 @@
-<%#
-  Table pagination bar (Carbon data-table pattern, Primer a11y):
-  [Rows per page ▾]  1–20 of 1,234            Page [3 ▾] of 62   ‹  ›
-  Rendered whenever the collection is paginated, so the range is always visible.
-%>
-<% if resources.respond_to?(:total_pages) %>
-  <% param = local_assigns.fetch(:param_name, "_page") %>
-  <% top_level = param == "_page" %>
+<%# Administrate's pagination (Kaminari `paginate`, same param_name), with a range summary. %>
+<% if resources.respond_to?(:total_pages) && resources.total_pages > 1 %>
   <% d = AdministrateThemeUi.config.delimiter %>
-  <% total = resources.total_count %>
-  <% from = total.zero? ? 0 : resources.offset_value + 1 %>
-  <% to = [resources.offset_value + resources.limit_value, total].min %>
-  <% pages = [resources.total_pages, 1].max %>
-  <% current = resources.current_page %>
-  <% page_url = ->(n) { url_for(request.query_parameters.deep_merge(top_level ? { "_page" => n } : param.sub("]", "").split("[").reverse.inject(n) { |acc, k| { k => acc } })) } %>
-  <nav class="atu-pager" aria-label="Pagination">
-    <div class="atu-pager__start">
-      <% if top_level %>
-        <form class="atu-pager__size" method="get" data-atu-autosubmit>
-          <% request.query_parameters.except("per_page", "_page").each do |k, v| %>
-            <% next unless v.is_a?(String) %>
-            <input type="hidden" name="<%= k %>" value="<%= v %>">
-          <% end %>
-          <label for="atu-per-page">Rows per page</label>
-          <select id="atu-per-page" name="per_page" class="atu-pager__select">
-            <% AdministrateThemeUi.config.per_page_options.each do |n| %>
-              <option value="<%= n %>" <%= "selected" if n == resources.limit_value %>><%= n %></option>
-            <% end %>
-          </select>
-        </form>
-        <span class="atu-pager__divider" aria-hidden="true"></span>
-      <% end %>
-      <span class="atu-pager__range" aria-live="polite">
-        <%= number_with_delimiter(from, delimiter: d) %>–<%= number_with_delimiter(to, delimiter: d) %> of <%= number_with_delimiter(total, delimiter: d) %>
-      </span>
-    </div>
-    <div class="atu-pager__end">
-      <span class="atu-pager__page">
-        Page
-        <% if top_level && pages > 1 && pages <= 500 %>
-          <form method="get" class="atu-pager__jump" data-atu-autosubmit>
-            <% request.query_parameters.except("_page").each do |k, v| %>
-              <% next unless v.is_a?(String) %>
-              <input type="hidden" name="<%= k %>" value="<%= v %>">
-            <% end %>
-            <label class="atu-visually-hidden" for="atu-page-jump">Go to page</label>
-            <select id="atu-page-jump" name="_page" class="atu-pager__select">
-              <% (1..pages).each do |n| %><option value="<%= n %>" <%= "selected" if n == current %>><%= n %></option><% end %>
-            </select>
-          </form>
-        <% else %>
-          <strong><%= number_with_delimiter(current, delimiter: d) %></strong>
-        <% end %>
-        of <%= number_with_delimiter(pages, delimiter: d) %>
-      </span>
-      <div class="atu-pager__nav">
-        <% [["chevrons-left", "First page", 1, current > 1],
-            ["chevron-left", "Previous page", current - 1, current > 1],
-            ["chevron-right", "Next page", current + 1, current < pages],
-            ["chevrons-right", "Last page", pages, current < pages]].each do |icon, label, n, enabled| %>
-          <% if enabled %>
-            <%= link_to page_url.call(n), class: "atu-pager__btn", "aria-label": label, title: label, rel: ({ "Previous page" => "prev", "Next page" => "next" }[label]) do %><%= atu_icon(icon, size: 16) %><% end %>
-          <% else %>
-            <span class="atu-pager__btn" aria-disabled="true" aria-label="<%= label %>" role="link"><%= atu_icon(icon, size: 16) %></span>
-          <% end %>
-        <% end %>
-      </div>
-    </div>
-  </nav>
+  <% from = resources.offset_value + 1 %>
+  <% to = [resources.offset_value + resources.limit_value, resources.total_count].min %>
+  <div class="atu-pager">
+    <span class="atu-pager__range"><%= number_with_delimiter(from, delimiter: d) %>–<%= number_with_delimiter(to, delimiter: d) %> of <%= number_with_delimiter(resources.total_count, delimiter: d) %></span>
+    <%= paginate resources, param_name: local_assigns.fetch(:param_name, "_page"), theme: "administrate_theme_ui" %>
+  </div>
 <% end %>

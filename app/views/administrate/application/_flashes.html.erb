@@ -1,13 +1,12 @@
+<%# Same behaviour as Administrate: every flash rendered inline at the top, persistent. %>
 <% if flash.any? %>
-  <div class="atu-toasts" aria-live="polite">
+  <div class="atu-flashes flashes">
     <% flash.each do |key, value| -%>
       <% next unless value.respond_to?(:html_safe) %>
       <% tone = { "notice" => :success, "success" => :success, "alert" => :danger, "error" => :danger, "warning" => :warning }.fetch(key.to_s, :info) %>
-      <div class="atu-toast atu-toast--<%= tone %>" data-atu-toast role="<%= tone == :danger ? "alert" : "status" %>">
-        <%= atu_icon({ success: "check-circle", danger: "x-circle", warning: "alert" }.fetch(tone, "info"), size: 17, class: "atu-toast__icon") %>
-        <div class="atu-toast__msg"><%= value.html_safe %></div>
-        <button type="button" class="atu-toast__close" data-atu-dismiss aria-label="Dismiss"><%= atu_icon("x", size: 14) %></button>
-        <span class="atu-toast__timer" aria-hidden="true"></span>
+      <div class="atu-alert atu-alert--<%= tone %> flash flash-<%= key %>" role="<%= tone == :danger ? "alert" : "status" %>">
+        <%= atu_icon({ success: "check-circle", danger: "x-circle", warning: "alert" }.fetch(tone, "info"), size: 18, class: "atu-alert__icon") %>
+        <div class="atu-alert__content"><%= value.html_safe %></div>
       </div>
     <% end -%>
   </div>

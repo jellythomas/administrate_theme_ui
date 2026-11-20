@@ -11,11 +11,23 @@
   <%= content_for(:header_last) %>
 <% end %>
 
-<%= atu_filter_tabs(filters, search_term) %>
-
 <% if show_search_bar %>
   <div class="atu-toolbar">
     <%= render("search", search_term: search_term, resource_name: display_resource_name(page.resource_name)) %>
+    <% if filters.any? %>
+      <%# Same markup/behaviour as Administrate's index header: a help popover listing the filters. %>
+      <div class="atu-filter-help" data-controller="tooltip">
+        <button type="button" data-tooltip-target="tooltip" popovertarget="search-tooltip" class="atu-iconbtn button--tooltip search__tooltip" aria-label="Search filters"><%= atu_icon("filter", size: 15) %></button>
+        <div data-tooltip-target="popover" popover id="search-tooltip" role="tooltip" class="atu-popover search__tooltip-popover search__tooltip-popover-positioning">
+          <p><strong>Use filters to refine your search</strong></p>
+          <ul>
+            <% filters.keys.each do |filter_key| %>
+              <li><code><%= filter_key %>:<span class="search__tooltip-popover-value">&lt;value&gt;</span></code></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    <% end %>
     <%= content_for(:atu_toolbar_end) %>
   </div>
 <% end %>

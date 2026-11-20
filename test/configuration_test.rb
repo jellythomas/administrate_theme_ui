@@ -20,11 +20,6 @@ class ConfigurationTest < Minitest::Test
     assert_equal :neutral, @c.tone_for(nil)
   end
 
-  def test_per_page_defaults
-    assert_equal [10, 20, 50, 100], @c.per_page_options
-    assert_equal 20, @c.default_per_page
-  end
-
   def test_custom_tones_win_over_defaults
     @c.status_tones = { warning: %w[approved] }
     assert_equal :warning, @c.tone_for("approved")

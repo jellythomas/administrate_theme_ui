@@ -43,13 +43,8 @@
   display: grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 50%;
   background: var(--atu-danger-bg); color: var(--atu-danger-fg);
 }
-#atu-confirm .atu-modal__body { padding-left: 70px; }
-.atu-confirm__note { color: var(--atu-muted); font-size: 13px; }
-.atu-confirm__type { margin-top: 14px; }
-.atu-confirm__type label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--atu-text-2); }
-.atu-confirm__type strong { font-family: var(--atu-font-mono); font-weight: 500; color: var(--atu-text); background: var(--atu-surface-2); padding: 1px 5px; border-radius: 4px; }
-.atu-confirm__type .atu-input { height: 34px; padding: 0 10px; font: inherit; font-family: var(--atu-font-mono); font-size: 13px; width: 100%; color: var(--atu-text); background: var(--atu-surface); border: 1px solid var(--atu-border-strong); border-radius: var(--atu-radius-sm); }
-.atu-confirm__type .atu-input:focus { outline: none; border-color: var(--atu-danger-solid); box-shadow: 0 0 0 3px color-mix(in srgb, var(--atu-danger-solid) 20%, transparent); }
+#atu-confirm .atu-modal__header { padding-bottom: 20px; }
+#atu-confirm .atu-modal__title { font-family: var(--atu-font); font-size: 15px; font-weight: 600; }
 
 @keyframes atu-modal-in { from { opacity: 0; transform: translateY(6px) scale(.985); } }
 @keyframes atu-modal-out { to { opacity: 0; transform: translateY(4px) scale(.99); } }
@@ -60,5 +55,4 @@
   .atu-modal { width: 100%; max-width: 100%; margin: auto 0 0; max-height: 92vh; }
   .atu-modal__panel { border-radius: 14px 14px 0 0; }
   .atu-modal__footer { flex-direction: column-reverse; align-items: stretch; }
-  #atu-confirm .atu-modal__body { padding-left: 24px; }
 }

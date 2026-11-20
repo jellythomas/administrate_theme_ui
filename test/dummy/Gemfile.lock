@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    administrate_theme_ui (0.2.0)
+    administrate_theme_ui (0.3.0)
       administrate (>= 1.0, < 2)
       railties (>= 7.0, < 9)
       sprockets-rails (>= 3.4, < 4)

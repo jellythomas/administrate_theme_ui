@@ -6,7 +6,7 @@
   <%= content_for(:header_middle) %>
   <% if accessible_action?(page.resource, :destroy) %>
     <%= button_to [namespace, page.resource], method: :delete, class: "atu-btn atu-btn--ghost-danger",
-                  form: { data: { atu_confirm: "#{page.page_title} will be permanently deleted.", atu_confirm_title: "Delete #{page.page_title}?", atu_confirm_action: "Delete #{display_resource_name(page.resource_name, singular: true).downcase}" } } do %>
+                  data: { turbo_confirm: t("administrate.actions.confirm"), confirm: t("administrate.actions.confirm") } do %>
       <%= atu_icon("trash", size: 15) %><%= t("administrate.actions.destroy") %>
     <% end %>
   <% end %>

@@ -267,24 +267,6 @@ module AdministrateThemeUi
       end
     end
 
-    # Tabs for Administrate COLLECTION_FILTERS ("All" + one per filter). One
-    # filter is active at a time; other free-text search words are preserved.
-    def atu_filter_tabs(filters, search_term)
-      return if filters.blank?
-
-      words = search_term.to_s.split
-      filter_words, free = words.partition { |w| filters.keys.any? { |k| w == "#{k}:" || w.start_with?("#{k}:") } }
-      active = filter_words.first&.split(":")&.first
-      tab = lambda do |label, token, on|
-        term = (free + [token].compact).join(" ").presence
-        link_to(label, url_for(request.query_parameters.merge(search: term, _page: nil)),
-                class: ["atu-tab", ("is-active" if on)], "aria-current": (on ? "true" : nil))
-      end
-      tag.nav(class: "atu-tabs", "aria-label": "Filters") do
-        safe_join([tab.call("All", nil, active.nil?)] + filters.keys.map { |k| tab.call(k.to_s.humanize, "#{k}:", active == k.to_s) })
-      end
-    end
-
     # Sidebar items grouped by config.navigation_groups. Resources come from
     # config.navigation_resources (e.g. a role-filtered list) or, by default, every
     # routed resource in the namespace. Dashboard-less custom pages are listed too.

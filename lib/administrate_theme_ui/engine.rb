@@ -22,9 +22,6 @@ module AdministrateThemeUi
       Administrate::Engine.add_javascript("administrate_theme_ui/application") unless Administrate::Engine.javascripts.include?("administrate_theme_ui/application")
 
       Administrate::ApplicationController.helper(AdministrateThemeUi::ComponentsHelper)
-      unless Administrate::ApplicationController < AdministrateThemeUi::ControllerExtensions
-        Administrate::ApplicationController.prepend(AdministrateThemeUi::ControllerExtensions)
-      end
     end
   end
 end

@@ -1,0 +1,1 @@
+<% if page.current? %><span class="atu-page is-current" aria-current="page"><%= page %></span><% else %><%= link_to page, url, class: "atu-page", rel: page.rel, "aria-label": "Page #{page}" %><% end %>

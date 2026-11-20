@@ -1,3 +1,6 @@
+<%# Same actions and conditions as Administrate. Destroy is a link with Rails' standard
+    method/confirm attributes (Turbo: data-turbo-*, rails-ujs/jquery_ujs: data-method/confirm),
+    so Administrate's row-click controller (which skips targets with an href) leaves it alone. %>
 <% can_edit = existing_action?(collection_presenter.resource_name, :edit) %>
 <% can_destroy = existing_action?(collection_presenter.resource_name, :destroy) %>
 <% if can_edit || can_destroy %>
@@ -7,8 +10,10 @@
         <%= link_to [:edit, namespace, resource], class: "atu-iconbtn action-edit", title: t("administrate.actions.edit"), "aria-label": t("administrate.actions.edit") do %><%= atu_icon("edit", size: 16) %><% end %>
       <% end %>
       <% if can_destroy && accessible_action?(resource, :destroy) %>
-        <%= button_to [namespace, resource], method: :delete, class: "atu-iconbtn atu-iconbtn--danger", title: t("administrate.actions.destroy"), "aria-label": t("administrate.actions.destroy"),
-                      form: { data: { atu_confirm: "#{display_resource_name(collection_presenter.resource_name, singular: true)} ##{resource.id} will be permanently deleted.", atu_confirm_title: "Delete #{display_resource_name(collection_presenter.resource_name, singular: true).downcase}?", atu_confirm_action: "Delete #{display_resource_name(collection_presenter.resource_name, singular: true).downcase}" } } do %><%= atu_icon("trash", size: 16) %><% end %>
+        <%= link_to [namespace, resource], class: "atu-iconbtn atu-iconbtn--danger", rel: "nofollow",
+                    title: t("administrate.actions.destroy"), "aria-label": t("administrate.actions.destroy"),
+                    data: { turbo_method: :delete, turbo_confirm: t("administrate.actions.confirm"),
+                            method: :delete, confirm: t("administrate.actions.confirm") } do %><%= atu_icon("trash", size: 16) %><% end %>
       <% end %>
     </div>
   </td>

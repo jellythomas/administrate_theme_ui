@@ -37,9 +37,7 @@
   media.addEventListener("change", function () { if (currentMode() === "system") applyPrefs(); });
 
   document.addEventListener("change", function (e) {
-    if (e.target.matches("[data-atu-theme-select]")) { save({ theme: e.target.value }); applyPrefs(); return; }
-    var auto = e.target.closest("form[data-atu-autosubmit]");
-    if (auto) auto.requestSubmit ? auto.requestSubmit() : auto.submit();
+    if (e.target.matches("[data-atu-theme-select]")) { save({ theme: e.target.value }); applyPrefs(); }
   });
 
   // ---------- Modals ----------
@@ -56,80 +54,40 @@
     setTimeout(function () { d.classList.remove("is-closing"); d.close(); }, 150);
   }
 
-  // ---------- Confirm dialog (destructive) ----------
-  // Primer/Geist rules: Cancel gets initial focus; backdrop click doesn't dismiss;
-  // action label is verb + noun; optional type-to-confirm keeps the button disabled.
-  var pending = null;
-  function askConfirm(opts, onAccept) {
-    if (typeof opts === "string") opts = { message: opts };
+  // ---------- Confirm (presentation only) ----------
+  // Behaviour stays Administrate's: links/buttons carry data-turbo-confirm and Turbo
+  // asks for confirmation. We only swap the browser's native confirm() for a styled
+  // dialog through Turbo's official hook. Without Turbo nothing changes.
+  function styledConfirm(message) {
     var d = document.getElementById("atu-confirm");
-    if (!d) { if (window.confirm(opts.message)) onAccept(); return; }
-    d.querySelector("[data-atu-confirm-title]").textContent = opts.title || "Are you sure?";
-    d.querySelector("[data-atu-confirm-message]").textContent = opts.message || "";
-    var accept = d.querySelector("[data-atu-confirm-accept]");
-    accept.textContent = opts.action || "Delete";
-    var typeBox = d.querySelector("[data-atu-confirm-type]");
-    var input = d.querySelector("[data-atu-confirm-input]");
-    input.value = "";
-    if (opts.expect) {
-      typeBox.hidden = false;
-      d.querySelector("[data-atu-confirm-expected]").textContent = opts.expect;
-      accept.disabled = true;
-      input.dataset.expect = opts.expect;
-    } else {
-      typeBox.hidden = true;
-      accept.disabled = false;
-      delete input.dataset.expect;
-    }
-    pending = onAccept;
-    openModal(d);
-    (opts.expect ? input : d.querySelector("[data-atu-confirm-cancel]")).focus();
-  }
-  function confirmOptions(el) {
-    return { message: el.dataset.atuConfirm, title: el.dataset.atuConfirmTitle, action: el.dataset.atuConfirmAction, expect: el.dataset.atuConfirmType };
-  }
-  function acceptConfirm() {
-    var d = document.getElementById("atu-confirm");
-    var accept = d.querySelector("[data-atu-confirm-accept]");
-    if (accept.disabled) return;
-    var fn = pending; pending = null;
-    closeModal(d);
-    if (fn) fn();
-  }
-
-  document.addEventListener("input", function (e) {
-    if (!e.target.matches("[data-atu-confirm-input]")) return;
-    var accept = document.querySelector("#atu-confirm [data-atu-confirm-accept]");
-    accept.disabled = e.target.value.trim() !== e.target.dataset.expect;
-  });
-
-  document.addEventListener("submit", function (e) {
-    var form = e.target;
-    if (!form.matches("form[data-atu-confirm]") || form.dataset.atuConfirmed) return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    askConfirm(confirmOptions(form), function () {
-      form.dataset.atuConfirmed = "1";
-      form.requestSubmit ? form.requestSubmit() : form.submit();
+    if (!d || typeof d.showModal !== "function") return Promise.resolve(window.confirm(message));
+    d.querySelector("[data-atu-confirm-message]").textContent = message;
+    return new Promise(function (resolve) {
+      function finish(ok) {
+        d.removeEventListener("cancel", onCancel);
+        accept.removeEventListener("click", onAccept);
+        cancel.removeEventListener("click", onCancelClick);
+        closeModal(d);
+        resolve(ok);
+      }
+      var accept = d.querySelector("[data-atu-confirm-accept]");
+      var cancel = d.querySelector("[data-atu-confirm-cancel]");
+      function onAccept() { finish(true); }
+      function onCancelClick() { finish(false); }
+      function onCancel(e) { e.preventDefault(); finish(false); }   // Esc
+      accept.addEventListener("click", onAccept);
+      cancel.addEventListener("click", onCancelClick);
+      d.addEventListener("cancel", onCancel);
+      openModal(d);
+      cancel.focus();
     });
-  }, true);
-
-  // Esc on any dialog: native close, just drop a pending confirm.
-  document.addEventListener("cancel", function (e) { if (e.target.id === "atu-confirm") pending = null; }, true);
-
-  // ---------- Keyboard ----------
-  document.addEventListener("keydown", function (e) {
-    var t = e.target;
-    var typing = t.closest && t.closest("input, textarea, select, [contenteditable], trix-editor");
-    if (e.key === "Escape") document.querySelectorAll("details[data-atu-menu][open]").forEach(function (m) { m.open = false; });
-    if (e.key === "/" && !typing && !e.metaKey && !e.ctrlKey) {
-      var search = document.querySelector("[data-atu-search]");
-      if (search) { e.preventDefault(); search.focus(); search.select(); }
-      return;
-    }
-    if (e.key === "Enter" && t.matches && t.matches("[data-atu-confirm-input]")) { e.preventDefault(); acceptConfirm(); return; }
-    if ((e.key === "Enter" || e.key === " ") && t.matches && t.matches(".atu-table tr[data-url]")) { e.preventDefault(); visitRow(e); }
-  });
+  }
+  function registerConfirm() {
+    var T = window.Turbo;
+    if (!T) return;
+    if (T.config && T.config.forms && "confirm" in T.config.forms) T.config.forms.confirm = styledConfirm;
+    else if (typeof T.setConfirmMethod === "function") T.setConfirmMethod(styledConfirm);
+  }
 
   // ---------- Click delegation ----------
   document.addEventListener("click", function (e) {
@@ -149,61 +107,18 @@
       return;
     }
 
+    // Opt-in modal helper (atu_modal / atu_modal_trigger)
     if ((el = t.closest("[data-atu-modal-open]"))) { e.preventDefault(); openModal(el.dataset.atuModalOpen); return; }
-    if ((el = t.closest("[data-atu-confirm-accept]"))) { acceptConfirm(); return; }
-    if ((el = t.closest("[data-atu-modal-close]"))) {
-      var dlg = el.closest("dialog");
-      if (dlg && dlg.id === "atu-confirm") pending = null;
-      closeModal(dlg);
-      return;
-    }
-    // Backdrop click (the click lands on the <dialog> itself, outside the panel)
-    if (t.matches("dialog.atu-modal") && !t.hasAttribute("data-atu-static")) { closeModal(t); return; }
+    if ((el = t.closest("[data-atu-modal-close]"))) { closeModal(el.closest("dialog")); return; }
+    if (t.matches("dialog.atu-modal") && !t.hasAttribute("data-atu-static")) { closeModal(t); return; }  // backdrop
 
-    if ((el = t.closest("a[data-atu-confirm]"))) {
-      e.preventDefault();
-      var href = el.href;
-      askConfirm(confirmOptions(el), function () { window.location.href = href; });
-      return;
-    }
+    if ((el = t.closest("[data-atu-dismiss]"))) { var n = el.closest(".atu-alert"); if (n) n.remove(); return; }
 
-    if ((el = t.closest("[data-atu-dismiss]"))) { dismiss(el.closest(".atu-toast, .atu-alert")); return; }
-
-    // Close any open <details data-atu-menu> when clicking elsewhere.
     document.querySelectorAll("details[data-atu-menu][open]").forEach(function (m) { if (!m.contains(t)) m.open = false; });
-
-    visitRow(e);
   });
-
-  // ---------- Clickable table rows ----------
-  // Replaces Administrate's table controller, which only ignored targets with
-  // an href, so clicks on icon buttons (delete) also navigated to the record.
-  function visitRow(e) {
-    var row = e.target.closest(".atu-table tr[data-url]");
-    if (!row || e.target.closest("a, button, input, select, textarea, label, form, summary")) return;
-    if (String(window.getSelection())) return;
-    if (e.metaKey || e.ctrlKey) { window.open(row.dataset.url, "_blank"); return; }
-    window.Turbo ? window.Turbo.visit(row.dataset.url) : (window.location.href = row.dataset.url);
-  }
-
-  // ---------- Toasts ----------
-  // Success/info auto-dismiss after 5s (Polaris default); errors stay until closed (Carbon).
-  function dismiss(node) {
-    if (!node || node.classList.contains("is-leaving")) return;
-    node.classList.add("is-leaving");
-    setTimeout(function () { node.remove(); }, 180);
-  }
-  function scheduleToasts() {
-    document.querySelectorAll("[data-atu-toast]:not([data-scheduled])").forEach(function (n) {
-      n.dataset.scheduled = "1";
-      if (n.classList.contains("atu-toast--danger")) { var timer = n.querySelector(".atu-toast__timer"); if (timer) timer.remove(); return; }
-      var remaining = 5000, started = Date.now(), handle;
-      function arm() { started = Date.now(); handle = setTimeout(function () { dismiss(n); }, remaining); }
-      n.addEventListener("mouseenter", function () { clearTimeout(handle); remaining -= Date.now() - started; });
-      n.addEventListener("mouseleave", arm);
-      arm();
-    });
-  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") document.querySelectorAll("details[data-atu-menu][open]").forEach(function (m) { m.open = false; });
+  });
 
   // ---------- Charts ----------
   var charts = [];
@@ -309,8 +224,7 @@
   function boot() {
     if (root.dataset.sidebar === "open") root.dataset.sidebar = "";
     syncSwitcher();
-    scheduleToasts();
-    // Fonts change metrics; draw charts once webfonts are ready.
+    registerConfirm();
     (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { renderCharts(); });
   }
   document.addEventListener("DOMContentLoaded", boot);
@@ -318,5 +232,5 @@
   document.addEventListener("turbolinks:load", boot);
   document.addEventListener("turbo:before-cache", destroyCharts);
 
-  window.AdministrateThemeUi = { openModal: openModal, closeModal: closeModal, confirm: askConfirm, renderCharts: renderCharts, applyPrefs: applyPrefs };
+  window.AdministrateThemeUi = { openModal: openModal, closeModal: closeModal, renderCharts: renderCharts, applyPrefs: applyPrefs };
 })();
